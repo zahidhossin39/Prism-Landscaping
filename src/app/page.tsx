@@ -1,69 +1,106 @@
-import Image from "next/image";
+"use client";
+
+import React, { useState } from "react";
+import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
+import HeroFeatures from "@/components/HeroFeatures";
+import AboutSection from "@/components/AboutSection";
+import ServicesSection from "@/components/ServicesSection";
+import StatsSection from "@/components/StatsSection";
+import OutdoorsBanner from "@/components/OutdoorsBanner";
+import HowItWorksSection from "@/components/HowItWorksSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
+import GallerySection from "@/components/GallerySection";
+import FAQSection from "@/components/FAQSection";
+import BlogSection from "@/components/BlogSection";
+import CtaBanner from "@/components/CtaBanner";
+import Footer from "@/components/Footer";
+import QuoteModal from "@/components/QuoteModal";
+import VideoModal from "@/components/VideoModal";
 
 export default function Home() {
+  const [quoteModalOpen, setQuoteModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState("Lawn Mowing");
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [activeVideoSrc, setActiveVideoSrc] = useState("/assets/video-hero.mp4");
+  const [activeVideoTitle, setActiveVideoTitle] = useState("Greenly Video");
+
+  const handleOpenQuote = (service?: string) => {
+    if (service) setSelectedService(service);
+    setQuoteModalOpen(true);
+  };
+
+  const handleOpenVideo = (src: string, title?: string) => {
+    setActiveVideoSrc(src);
+    if (title) setActiveVideoTitle(title);
+    setVideoModalOpen(true);
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="min-h-screen bg-[#f2f1e7] text-[#1f1f1f] relative overflow-hidden">
+      {/* Top Navigation */}
+      <Navbar onOpenQuote={handleOpenQuote} />
+
+      {/* Hero Section */}
+      <Hero
+        onOpenQuote={() => handleOpenQuote()}
+        onOpenVideo={() =>
+          handleOpenVideo(
+            "/assets/video-hero.mp4",
+            "Greenly - Transforming Outdoor Spaces"
+          )
+        }
+      />
+
+      {/* 3 Core Highlight Features */}
+      <HeroFeatures />
+
+      {/* Dedicated to Keeping Green Spaces Beautiful */}
+      <AboutSection onOpenQuote={() => handleOpenQuote()} />
+
+      {/* Our Expert Services Today */}
+      <ServicesSection onOpenQuote={handleOpenQuote} />
+
+      {/* Loved by Our Valued Clients */}
+      <StatsSection />
+
+      {/* Make Your Outdoors Beautiful, Naturally Banner */}
+      <OutdoorsBanner onOpenQuote={() => handleOpenQuote()} />
+
+      {/* 4-Step Process: How It Works */}
+      <HowItWorksSection />
+
+      {/* Trusted by 12k Happy Customers */}
+      <TestimonialsSection onOpenVideo={handleOpenVideo} />
+
+      {/* Our Landscaping Gallery */}
+      <GallerySection onOpenQuote={() => handleOpenQuote()} />
+
+      {/* Frequently Asked Questions */}
+      <FAQSection onOpenQuote={() => handleOpenQuote()} />
+
+      {/* Green Living Our Blog */}
+      <BlogSection />
+
+      {/* Transform Your Garden with Experts CTA Banner */}
+      <CtaBanner onOpenQuote={() => handleOpenQuote()} />
+
+      {/* Footer */}
+      <Footer onOpenQuote={handleOpenQuote} />
+
+      {/* Interactive Modals */}
+      <QuoteModal
+        isOpen={quoteModalOpen}
+        onClose={() => setQuoteModalOpen(false)}
+        defaultService={selectedService}
+      />
+
+      <VideoModal
+        isOpen={videoModalOpen}
+        onClose={() => setVideoModalOpen(false)}
+        videoSrc={activeVideoSrc}
+        title={activeVideoTitle}
+      />
+    </main>
   );
 }
