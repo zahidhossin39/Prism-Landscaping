@@ -17,6 +17,7 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,14 +31,21 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close menus on outside click or Escape key
+  // Close menus on outside click, window resize, or Escape key
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
       if (
         dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
+        !dropdownRef.current.contains(target)
       ) {
         setDropdownOpen(false);
+      }
+      if (
+        headerRef.current &&
+        !headerRef.current.contains(target)
+      ) {
+        setMobileMenuOpen(false);
       }
     };
 
@@ -48,16 +56,26 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
       }
     };
 
-    if (dropdownOpen) {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    if (dropdownOpen || mobileMenuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
     }
     window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", handleResize);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
       window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("resize", handleResize);
     };
-  }, [dropdownOpen]);
+  }, [dropdownOpen, mobileMenuOpen]);
 
   // Close menus on route change during render
   const [prevPathname, setPrevPathname] = useState(pathname);
@@ -104,7 +122,10 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 w-full px-4 sm:px-8 pt-4 sm:pt-6 transition-all duration-300">
+    <header
+      ref={headerRef}
+      className="fixed top-0 left-0 right-0 z-40 w-full px-4 sm:px-8 pt-4 sm:pt-6 transition-all duration-300"
+    >
       <div
         className={`max-w-[1204px] mx-auto rounded-[10px] px-4 sm:px-5 md:pl-5 md:pr-[13px] py-2.5 sm:py-[13px] transition-all duration-300 flex items-center justify-between ${
           isScrolled
@@ -309,6 +330,7 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
         {/* Right CTA */}
         <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={handleFreeQuote}
             className="hidden md:inline-flex items-center justify-center bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] px-[21px] py-[8px] rounded-[8px] text-[16px] font-medium tracking-[-0.2px] transition-all duration-200 shadow-sm hover:shadow cursor-pointer whitespace-nowrap"
           >
@@ -317,9 +339,12 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
 
           {/* Mobile hamburger button */}
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 rounded-[8px] text-[#1f1f1f] hover:bg-[#f1efd9] transition-colors"
-            aria-label="Toggle menu"
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -329,7 +354,12 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden mt-2 mx-auto max-w-[1204px] bg-[#ffffff] rounded-[10px] shadow-xl border border-[#e5e3d7] p-5 space-y-4 animate-in fade-in slide-in-from-top-3 duration-200">
+        <div
+          id="mobile-menu"
+          role="region"
+          aria-label="Mobile Navigation"
+          className="md:hidden mt-2 mx-auto max-w-[1204px] max-h-[calc(100vh-100px)] overflow-y-auto bg-[#ffffff] rounded-[10px] shadow-xl border border-[#e5e3d7] p-5 space-y-4 animate-in fade-in slide-in-from-top-3 duration-200"
+        >
           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm font-medium text-[#1f1f1f]">
             {/* Left column */}
             <div className="flex flex-col space-y-1">
@@ -444,8 +474,9 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
 
           <div className="pt-2 border-t border-[#f1efd9]">
             <button
+              type="button"
               onClick={handleFreeQuote}
-              className="w-full py-2.5 px-5 rounded-[8px] bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] font-medium text-sm transition-all text-center cursor-pointer shadow-sm"
+              className="w-full py-2.5 px-5 rounded-[8px] bg-[#bedd25] hover:bg-[#adce1e] active:scale-[0.99] text-[#1f1f1f] font-medium text-[16px] tracking-[-0.2px] transition-all duration-200 text-center cursor-pointer shadow-sm hover:shadow"
             >
               Get A Free Quote
             </button>
