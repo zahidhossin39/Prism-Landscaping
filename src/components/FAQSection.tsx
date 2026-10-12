@@ -1,11 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { Plus, Minus, ArrowUpRight } from "lucide-react";
-
-interface FAQSectionProps {
-  onOpenQuote: () => void;
-}
 
 const faqs = [
   {
@@ -35,7 +32,7 @@ const faqs = [
   },
 ];
 
-export default function FAQSection({ onOpenQuote }: FAQSectionProps) {
+export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const toggle = (idx: number) => {
@@ -60,24 +57,24 @@ export default function FAQSection({ onOpenQuote }: FAQSectionProps) {
 
         {/* 2 Columns: Help Box + Accordions */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left: Have Any Question box */}
+          {/* Left: Help Card */}
           <div className="lg:col-span-4 bg-[#f1efd9] rounded-2xl p-7 sm:p-8 border border-[#e2dec9] space-y-4">
             <h3 className="text-xl sm:text-2xl font-serif text-[#1f1f1f]">
-              Have Any Question Here?
+              Transform Your Garden Today
             </h3>
             <p className="text-xs sm:text-sm text-[#606060] leading-relaxed">
-              Relax and enjoy a greener, more beautiful garden—expertly crafted to match your vision.
+              Bring your garden to life with expert care and eco-friendly solutions. Our team of trained gardeners is ready to handle everything from routine maintenance.
             </p>
             <div className="pt-2">
-              <button
-                onClick={onOpenQuote}
+              <Link
+                href="/contact-us"
                 className="inline-flex items-center gap-3 bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] pl-5 pr-3 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 group shadow-sm hover:shadow"
               >
                 <span>Contact Us</span>
                 <span className="w-6 h-6 rounded-full bg-[#1f1f1f] text-white flex items-center justify-center transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </span>
-              </button>
+              </Link>
             </div>
           </div>
 

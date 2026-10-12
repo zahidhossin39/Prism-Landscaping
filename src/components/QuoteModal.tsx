@@ -156,6 +156,7 @@ export default function QuoteModal({ isOpen, onClose, defaultService = "Lawn Mow
                   onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                   className="w-full px-4 py-2.5 rounded-xl border border-[#d8d4bf] bg-[#f9f8f2] text-[#1f1f1f] focus:outline-none focus:ring-2 focus:ring-[#274839] transition-all text-sm cursor-pointer"
                 >
+                  <option value="Book A Demo">Book A Demo / Consultation</option>
                   <option value="Shrub Trimming">Shrub Trimming</option>
                   <option value="Garden Maintenance">Garden Maintenance</option>
                   <option value="Landscaping Design">Landscaping Design</option>

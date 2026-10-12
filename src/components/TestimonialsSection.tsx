@@ -6,6 +6,7 @@ import { Star, Play, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface TestimonialsSectionProps {
   onOpenVideo: (videoSrc: string, title: string) => void;
+  title?: React.ReactNode;
 }
 
 const testimonials = [
@@ -38,7 +39,10 @@ const testimonials = [
   },
 ];
 
-export default function TestimonialsSection({ onOpenVideo }: TestimonialsSectionProps) {
+export default function TestimonialsSection({
+  onOpenVideo,
+  title,
+}: TestimonialsSectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const prev = () => {
@@ -56,12 +60,16 @@ export default function TestimonialsSection({ onOpenVideo }: TestimonialsSection
       <div className="max-w-[1204px] mx-auto">
         {/* Section Heading */}
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-[#1f1f1f] leading-tight font-normal">
-            Trusted by 12k{" "}
-            <span className="font-serif italic font-semibold text-[#274839]">
-              Happy Customers
-            </span>
-          </h2>
+          {title ? (
+            title
+          ) : (
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-[#1f1f1f] leading-tight font-normal">
+              Trusted by 12k{" "}
+              <span className="font-serif italic font-semibold text-[#274839]">
+                Happy Customers
+              </span>
+            </h2>
+          )}
         </div>
 
         {/* Testimonial Card */}

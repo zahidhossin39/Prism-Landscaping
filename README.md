@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Prism Landscaping
 
-## Getting Started
+A modern, responsive, high-performance landscaping web application built with **Next.js 16 (App Router)**, **React 19**, **TypeScript**, and **Tailwind CSS**.
 
-First, run the development server:
+---
+
+## 🌿 Overview
+
+Prism Landscaping is an end-to-end web platform designed for premium landscaping and garden maintenance services. It features rich visual storytelling, dynamic CMS blog routing, detailed service showcases, interactive quote requests, and optimized responsive layouts across desktop, tablet, and mobile devices.
+
+---
+
+## ✨ Features
+
+- **Homepage**: Hero showcase, services carousel/grid, company story, gallery portfolio, customer testimonials, interactive FAQ accordion, and booking CTA banner.
+- **About Us**: Detailed company narrative, core values, mission & vision, dynamic stats counter, embedded video showcase, and team directory.
+- **Services Showcase**: Service catalog covering lawn care, hardscaping, aeration, soil conditioning, garden bed designs, and pest control.
+- **Dynamic Blog CMS**: Full blog listing and slug-based article detail pages (`/blog/[slug]`) driven by a structured TypeScript CMS dataset with inline media.
+- **Testimonials & Social Proof**: Verified customer reviews and ratings.
+- **Interactive Modals**: Multi-step quote request modal accessible across pages.
+- **Contact & Inquiry**: Dedicated contact page with location details and inquiry forms.
+- **Privacy & Legal**: Standard privacy policy and terms layout.
+- **Custom 404 Experience**: Dedicated branded 404 page with navigation fallbacks.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js 16](https://nextjs.org/) (Turbopack, App Router)
+- **Library**: [React 19](https://react.dev/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Ensure you have [Node.js](https://nodejs.org/) installed (v20+ recommended).
+
+### Installation
+
+Clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/zahidhossin39/Prism-Landscaping.git
+cd Prism-Landscaping
+npm install
+```
+
+### Development
+
+Run the local development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create an optimized production build:
 
-## Learn More
+```bash
+npm run build
+npm run start
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📁 Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```text
+├── public/
+│   ├── assets/        # Visual media, logos, photography, illustrations
+├── src/
+│   ├── app/           # Next.js App Router pages and layouts
+│   │   ├── about/     # About Us route
+│   │   ├── blog/      # Blog index & [slug] dynamic routes
+│   │   ├── contact-us/# Contact route
+│   │   ├── service/   # Services catalog route
+│   │   ├── testimonials/ # Customer reviews route
+│   │   ├── privacy/   # Privacy policy route
+│   │   └── not-found.tsx # Custom 404 handler
+│   ├── components/    # Reusable modular UI components
+│   └── data/          # CMS data & content models
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📄 License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License.

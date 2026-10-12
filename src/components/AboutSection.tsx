@@ -2,13 +2,20 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight, Check } from "lucide-react";
 
 interface AboutSectionProps {
   onOpenQuote: () => void;
+  ctaText?: string;
+  ctaHref?: string;
 }
 
-export default function AboutSection({ onOpenQuote }: AboutSectionProps) {
+export default function AboutSection({
+  onOpenQuote,
+  ctaText = "Discover Our Story",
+  ctaHref,
+}: AboutSectionProps) {
   return (
     <section id="about" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8">
       <div className="max-w-[1204px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
@@ -72,15 +79,27 @@ export default function AboutSection({ onOpenQuote }: AboutSectionProps) {
 
           {/* CTA */}
           <div className="pt-2">
-            <button
-              onClick={onOpenQuote}
-              className="inline-flex items-center gap-3 bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] pl-6 pr-3.5 py-3 rounded-full text-sm font-semibold transition-all duration-200 group shadow-sm hover:shadow"
-            >
-              <span>Discover Our Story</span>
-              <span className="w-7 h-7 rounded-full bg-[#1f1f1f] text-white flex items-center justify-center transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </span>
-            </button>
+            {ctaHref ? (
+              <Link
+                href={ctaHref}
+                className="inline-flex items-center gap-3 bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] pl-6 pr-3.5 py-3 rounded-full text-sm font-semibold transition-all duration-200 group shadow-sm hover:shadow"
+              >
+                <span>{ctaText}</span>
+                <span className="w-7 h-7 rounded-full bg-[#1f1f1f] text-white flex items-center justify-center transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </span>
+              </Link>
+            ) : (
+              <button
+                onClick={onOpenQuote}
+                className="inline-flex items-center gap-3 bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] pl-6 pr-3.5 py-3 rounded-full text-sm font-semibold transition-all duration-200 group shadow-sm hover:shadow cursor-pointer"
+              >
+                <span>{ctaText}</span>
+                <span className="w-7 h-7 rounded-full bg-[#1f1f1f] text-white flex items-center justify-center transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </span>
+              </button>
+            )}
           </div>
         </div>
       </div>

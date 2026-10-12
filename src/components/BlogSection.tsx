@@ -1,57 +1,43 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-
-const blogPosts = [
-  {
-    title: "Transform Your Outdoors with Expert Advice",
-    date: "Jan 10, 2026",
-    image: "/assets/blog-1.png",
-    category: "Lawn Care",
-  },
-  {
-    title: "Revamp Your Garden with Seasonal Tips",
-    date: "Jan 8, 2026",
-    image: "/assets/blog-2.png",
-    category: "Seasonal Guide",
-  },
-  {
-    title: "Maximize Your Space: Vertical Gardening Solutions",
-    date: "Jan 19, 2026",
-    image: "/assets/blog-3.png",
-    category: "Landscape Design",
-  },
-];
+import BlogImage from "@/components/BlogImage";
+import { getRecentBlogs } from "@/data/blogs";
 
 export default function BlogSection() {
+  const posts = getRecentBlogs().slice(0, 3);
+
   return (
     <section id="blog" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8">
       <div className="max-w-[1204px] mx-auto">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-[#1f1f1f] leading-tight font-normal">
-            Green Living{" "}
-            <span className="font-serif italic font-semibold text-[#274839]">
-              Our Blog
-            </span>
-          </h2>
+          <Link href="/blog">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans text-[#1f1f1f] leading-tight font-medium hover:opacity-90 transition-opacity">
+              Green Living{" "}
+              <span className="font-serif italic font-medium text-[#1f1f1f]">
+                Our Blog
+              </span>
+            </h2>
+          </Link>
         </div>
 
         {/* 3 Blog Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-          {blogPosts.map((post, idx) => (
-            <article
-              key={idx}
+          {posts.map((post) => (
+            <Link
+              key={post.slug}
+              href={`/blog/${post.slug}`}
               className="group cursor-pointer bg-[#ffffff] rounded-2xl overflow-hidden border border-[#e5e3d7] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col hover:-translate-y-1"
             >
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-black/10">
-                <Image
-                  src={post.image}
+                <BlogImage
+                  src={post.coverImage}
+                  fallbackSrc={post.fallbackCoverImage}
                   alt={post.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-106"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
 
@@ -66,7 +52,7 @@ export default function BlogSection() {
                     </span>
                   </div>
 
-                  <h3 className="text-base sm:text-lg font-serif font-medium text-[#1f1f1f] group-hover:text-[#274839] transition-colors leading-snug">
+                  <h3 className="text-base sm:text-lg font-sans font-medium text-[#1f1f1f] group-hover:text-[#274839] transition-colors leading-snug">
                     {post.title}
                   </h3>
                 </div>
@@ -78,7 +64,7 @@ export default function BlogSection() {
                   </div>
                 </div>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       </div>

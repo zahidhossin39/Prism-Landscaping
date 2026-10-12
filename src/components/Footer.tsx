@@ -3,7 +3,6 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 
 interface FooterProps {
   onOpenQuote: (service?: string) => void;
@@ -11,10 +10,10 @@ interface FooterProps {
 
 export default function Footer({ onOpenQuote }: FooterProps) {
   return (
-    <footer id="contact" className="bg-[#274839] text-white pt-16 sm:pt-20 pb-12 px-4 sm:px-6 md:px-8 border-t border-[#345c4a]">
+    <footer id="site-footer" className="bg-[#274839] text-white pt-16 sm:pt-20 pb-12 px-4 sm:px-6 md:px-8 border-t border-[#345c4a]">
       <div className="max-w-[1204px] mx-auto">
         {/* Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 pb-14 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-14 border-b border-white/10">
           {/* Brand Info (Col 1) */}
           <div className="lg:col-span-4 space-y-6">
             <Link href="/" className="inline-block">
@@ -28,54 +27,47 @@ export default function Footer({ onOpenQuote }: FooterProps) {
             </Link>
 
             <p className="text-xs sm:text-sm text-white/75 leading-relaxed max-w-sm">
-              We provide professional gardening and lawn care services focused on beauty, sustainability, and attention to detail.
+              We provide professional gardening and lawn care services focused
             </p>
-
-            <div className="pt-2">
-              <button
-                onClick={() => onOpenQuote()}
-                className="inline-flex items-center gap-3 bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] pl-5 pr-3 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 group shadow-md"
-              >
-                <span>Book Your Service</span>
-                <span className="w-6 h-6 rounded-full bg-[#1f1f1f] text-white flex items-center justify-center transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-                  <ArrowUpRight className="w-3 h-3" />
-                </span>
-              </button>
-            </div>
           </div>
 
           {/* Quick Links (Col 2) */}
-          <div className="lg:col-span-2 space-y-4 lg:border-r lg:border-white/10 lg:pr-4">
-            <h4 className="text-sm font-semibold tracking-wider text-white uppercase font-sans">
+          <div className="lg:col-span-2 space-y-4 lg:border-l lg:border-white/10 lg:pl-8">
+            <h4 className="text-base font-medium text-[#f2f1e7] tracking-[-0.2px]">
               Quick Links
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-white/75">
               <li>
-                <a href="#about" className="hover:text-[#bedd25] transition-colors">
+                <Link href="/about" className="hover:text-[#bedd25] transition-colors">
                   About Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#bedd25] transition-colors">
+                <Link href="/service" className="hover:text-[#bedd25] transition-colors">
                   Our Services
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#blog" className="hover:text-[#bedd25] transition-colors">
+                <Link href="/contact-us" className="hover:text-[#bedd25] transition-colors">
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/testimonials" className="hover:text-[#bedd25] transition-colors">
+                  Testimonials
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="hover:text-[#bedd25] transition-colors">
                   Our Blog
-                </a>
-              </li>
-              <li>
-                <a href="#gallery" className="hover:text-[#bedd25] transition-colors">
-                  Gallery
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
 
           {/* Services (Col 3) */}
-          <div className="lg:col-span-3 space-y-4">
-            <h4 className="text-sm font-semibold tracking-wider text-white uppercase">
+          <div className="lg:col-span-3 space-y-4 lg:border-l lg:border-white/10 lg:pl-8">
+            <h4 className="text-base font-medium text-[#f2f1e7] tracking-[-0.2px]">
               Our Services
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-white/75">
@@ -114,16 +106,16 @@ export default function Footer({ onOpenQuote }: FooterProps) {
             </ul>
           </div>
 
-          {/* Contact (Col 4) */}
-          <div className="lg:col-span-3 space-y-4">
-            <h4 className="text-sm font-semibold tracking-wider text-white uppercase">
-              Contact Us
+          {/* Quick Links / Contact Details (Col 4) */}
+          <div className="lg:col-span-3 space-y-4 lg:border-l lg:border-white/10 lg:pl-8">
+            <h4 className="text-base font-medium text-[#f2f1e7] tracking-[-0.2px]">
+              Quick Links
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-white/75">
               <li>
                 <a
                   href="mailto:info@gardencare.com"
-                  className="hover:text-[#bedd25] transition-colors block"
+                  className="hover:text-[#bedd25] transition-colors block break-all"
                 >
                   info@gardencare.com
                 </a>
@@ -136,8 +128,15 @@ export default function Footer({ onOpenQuote }: FooterProps) {
                   +1 (000) 123-4567
                 </a>
               </li>
-              <li className="text-white/70">
-                123 Greenway Street, City Name
+              <li>
+                <a
+                  href="https://www.google.com/maps/search/123+Greenway+Street,+City+Name/@38.313351,-77.4350258,17z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI1MTIwOS4wIKXMDSoASAFQAw%3D%3D"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#bedd25] transition-colors block"
+                >
+                  123 Greenway Street, City Name
+                </a>
               </li>
               <li className="text-white/60 text-xs">
                 Mon – Sat: 8:00 AM – 6:00 PM
@@ -146,47 +145,22 @@ export default function Footer({ onOpenQuote }: FooterProps) {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/60">
-          <p>© 2026 Greenly. All Rights Reserved.</p>
+        {/* Bottom Content Bar: Button & Social Icons */}
+        <div className="py-7 border-b border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <button
+            onClick={() => onOpenQuote()}
+            className="inline-flex items-center justify-center bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] px-5 py-2.5 rounded-[8px] text-xs sm:text-sm font-semibold transition-all duration-200 shadow-md hover:scale-[1.02] cursor-pointer"
+          >
+            Book Your Service
+          </button>
 
-          {/* Social Icons */}
-          <div className="flex items-center gap-3">
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#bedd25] hover:text-[#1f1f1f] flex items-center justify-center transition-colors group p-2"
-              aria-label="X Twitter"
-            >
-              <Image
-                src="/assets/social-x.svg"
-                alt="X"
-                width={16}
-                height={16}
-                className="opacity-70 group-hover:opacity-100 group-hover:invert-0"
-              />
-            </a>
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#bedd25] hover:text-[#1f1f1f] flex items-center justify-center transition-colors group p-2"
-              aria-label="Instagram"
-            >
-              <Image
-                src="/assets/social-insta.svg"
-                alt="Instagram"
-                width={16}
-                height={16}
-                className="opacity-70 group-hover:opacity-100"
-              />
-            </a>
+          {/* Social Icons matching Framer: LinkedIn, Instagram, X */}
+          <div className="flex items-center gap-2">
             <a
               href="https://linkedin.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#bedd25] hover:text-[#1f1f1f] flex items-center justify-center transition-colors group p-2"
+              className="w-8 h-8 rounded-[6px] bg-white hover:bg-white/90 flex items-center justify-center transition-all shadow-sm hover:scale-105 p-1.5"
               aria-label="LinkedIn"
             >
               <Image
@@ -194,10 +168,53 @@ export default function Footer({ onOpenQuote }: FooterProps) {
                 alt="LinkedIn"
                 width={16}
                 height={16}
-                className="opacity-70 group-hover:opacity-100"
+                className="w-4 h-4 object-contain"
+              />
+            </a>
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-[6px] bg-white hover:bg-white/90 flex items-center justify-center transition-all shadow-sm hover:scale-105 p-1.5"
+              aria-label="Instagram"
+            >
+              <Image
+                src="/assets/social-insta.svg"
+                alt="Instagram"
+                width={16}
+                height={16}
+                className="w-4 h-4 object-contain"
+              />
+            </a>
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-[6px] bg-white hover:bg-white/90 flex items-center justify-center transition-all shadow-sm hover:scale-105 p-1.5"
+              aria-label="X Twitter"
+            >
+              <Image
+                src="/assets/social-x.svg"
+                alt="X"
+                width={14}
+                height={14}
+                className="w-3.5 h-3.5 object-contain"
               />
             </a>
           </div>
+        </div>
+
+        {/* Centered Copyright & Privacy */}
+        <div className="pt-6 text-center text-xs text-white/60 flex items-center justify-center gap-3">
+          <p>© 2026 Greenly. All Rights Reserved.</p>
+          <span className="text-white/30">•</span>
+          <Link
+            id="privacy"
+            href="/privacy"
+            className="hover:text-[#bedd25] transition-colors"
+          >
+            Privacy Policy
+          </Link>
         </div>
       </div>
     </footer>

@@ -56,7 +56,7 @@ export default function Home() {
       <HeroFeatures />
 
       {/* Dedicated to Keeping Green Spaces Beautiful */}
-      <AboutSection onOpenQuote={() => handleOpenQuote()} />
+      <AboutSection onOpenQuote={() => handleOpenQuote()} ctaHref="/about" />
 
       {/* Our Expert Services Today */}
       <ServicesSection onOpenQuote={handleOpenQuote} />
@@ -77,7 +77,7 @@ export default function Home() {
       <GallerySection onOpenQuote={() => handleOpenQuote()} />
 
       {/* Frequently Asked Questions */}
-      <FAQSection onOpenQuote={() => handleOpenQuote()} />
+      <FAQSection />
 
       {/* Green Living Our Blog */}
       <BlogSection />

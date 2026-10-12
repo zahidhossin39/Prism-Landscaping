@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
 interface ServicesSectionProps {
@@ -75,15 +76,15 @@ export default function ServicesSection({ onOpenQuote }: ServicesSectionProps) {
 
         {/* Bottom CTA Button */}
         <div className="mt-12 sm:mt-14">
-          <button
-            onClick={() => onOpenQuote()}
+          <Link
+            href="/service"
             className="inline-flex items-center gap-3 bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] pl-6 pr-3.5 py-3 rounded-full text-sm font-semibold transition-all duration-200 group shadow-sm hover:shadow hover:scale-[1.02]"
           >
-            <span>Explore Our Services</span>
+            <span>Explore All Services</span>
             <span className="w-7 h-7 rounded-full bg-[#1f1f1f] text-white flex items-center justify-center transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
               <ArrowUpRight className="w-3.5 h-3.5" />
             </span>
-          </button>
+          </Link>
         </div>
       </div>
     </section>

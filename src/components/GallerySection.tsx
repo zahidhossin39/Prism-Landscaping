@@ -6,6 +6,7 @@ import { ArrowUpRight, X, ZoomIn } from "lucide-react";
 
 interface GallerySectionProps {
   onOpenQuote: () => void;
+  buttonText?: string;
 }
 
 const galleryImages = [
@@ -17,7 +18,10 @@ const galleryImages = [
   { src: "/assets/gallery-6.png", title: "Tall Hedge Precision Shearing" },
 ];
 
-export default function GallerySection({ onOpenQuote }: GallerySectionProps) {
+export default function GallerySection({
+  onOpenQuote,
+  buttonText = "View All Gallery",
+}: GallerySectionProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   return (
@@ -36,9 +40,9 @@ export default function GallerySection({ onOpenQuote }: GallerySectionProps) {
 
           <button
             onClick={onOpenQuote}
-            className="inline-flex items-center gap-3 bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] pl-6 pr-3.5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 group shadow-sm hover:shadow"
+            className="inline-flex items-center gap-3 bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] pl-6 pr-3.5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 group shadow-sm hover:shadow cursor-pointer"
           >
-            <span>View Full Gallery</span>
+            <span>{buttonText}</span>
             <span className="w-6 h-6 rounded-full bg-[#1f1f1f] text-white flex items-center justify-center transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
               <ArrowUpRight className="w-3.5 h-3.5" />
             </span>
