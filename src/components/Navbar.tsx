@@ -124,8 +124,10 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
           />
         </Link>
 
-        {/* Desktop Nav Links */}
-        <nav className="hidden md:flex items-center gap-8 text-[15px] font-medium text-[#1f1f1f]">
+        {/* Right Section: Desktop Nav + CTA Button + Mobile Hamburger */}
+        <div className="flex items-center gap-3 md:gap-8 lg:gap-[60px]">
+          {/* Desktop Nav Links */}
+          <nav className="hidden md:flex items-center gap-8 text-[16px] font-medium tracking-[-0.2px] text-[#1f1f1f]">
           {/* Dropdown for Pages */}
           <div
             ref={dropdownRef}
@@ -154,7 +156,7 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
 
             {dropdownOpen && (
               <div
-                className="absolute top-full -left-3 sm:-left-4 mt-2.5 bg-[#ffffff] rounded-2xl shadow-xl border border-[#e5e3d7] px-7 py-6 text-[15px] animate-in fade-in slide-in-from-top-2 duration-150 z-50 whitespace-nowrap before:absolute before:-top-3 before:-left-4 before:-right-4 before:h-3 before:content-['']"
+                className="absolute top-full -left-3 sm:-left-4 mt-2.5 bg-[#ffffff] rounded-[10px] shadow-xl border border-[#e5e3d7] px-7 py-6 text-[15px] animate-in fade-in slide-in-from-top-2 duration-150 z-50 whitespace-nowrap before:absolute before:-top-3 before:-left-4 before:-right-4 before:h-3 before:content-['']"
                 onMouseEnter={() => setDropdownOpen(true)}
               >
                 <div className="flex gap-12 sm:gap-14">
@@ -293,16 +295,13 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
             Services
           </Link>
           <Link
-            href="/blog"
+            href="/contact-us"
             className={`transition-colors ${
-              pathname.startsWith("/blog")
+              pathname === "/contact-us"
                 ? "text-[#274839] font-semibold"
                 : "hover:text-[#274839]"
             }`}
           >
-            Blog
-          </Link>
-          <Link href="/contact-us" className="hover:text-[#274839] transition-colors">
             Contact
           </Link>
         </nav>
@@ -311,7 +310,7 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
         <div className="flex items-center gap-3">
           <button
             onClick={handleFreeQuote}
-            className="bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] px-4 sm:px-[21px] py-2 sm:py-[8px] rounded-[8px] text-xs sm:text-[15px] font-medium transition-all duration-200 shadow-sm hover:shadow cursor-pointer"
+            className="bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] px-3 sm:px-[21px] py-2 sm:py-[8px] rounded-[8px] text-xs sm:text-[16px] font-medium tracking-[-0.2px] transition-all duration-200 shadow-sm hover:shadow cursor-pointer whitespace-nowrap"
           >
             Get A Free Quote
           </button>
@@ -325,18 +324,19 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
+        </div>
       </div>
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden mt-2 mx-auto max-w-[1204px] bg-[#ffffff] rounded-2xl shadow-xl border border-[#e5e3d7] p-5 space-y-4 animate-in fade-in slide-in-from-top-3 duration-200">
+        <div className="md:hidden mt-2 mx-auto max-w-[1204px] bg-[#ffffff] rounded-[10px] shadow-xl border border-[#e5e3d7] p-5 space-y-4 animate-in fade-in slide-in-from-top-3 duration-200">
           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm font-medium text-[#1f1f1f]">
             {/* Left column */}
             <div className="flex flex-col space-y-1">
               <Link
                 href="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-3 py-2 rounded-xl transition-colors ${
+                className={`px-3 py-2 rounded-[8px] transition-colors ${
                   pathname === "/"
                     ? "bg-[#f1efd9] text-[#274839] font-semibold"
                     : "hover:bg-[#f1efd9] hover:text-[#274839]"
@@ -347,7 +347,7 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
               <Link
                 href="/about"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-3 py-2 rounded-xl transition-colors ${
+                className={`px-3 py-2 rounded-[8px] transition-colors ${
                   pathname === "/about"
                     ? "bg-[#f1efd9] text-[#274839] font-semibold"
                     : "hover:bg-[#f1efd9] hover:text-[#274839]"
@@ -358,7 +358,7 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
               <Link
                 href="/service"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-3 py-2 rounded-xl transition-colors ${
+                className={`px-3 py-2 rounded-[8px] transition-colors ${
                   pathname === "/service"
                     ? "bg-[#f1efd9] text-[#274839] font-semibold"
                     : "hover:bg-[#f1efd9] hover:text-[#274839]"
@@ -369,7 +369,7 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
               <Link
                 href="/blog"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-3 py-2 rounded-xl transition-colors ${
+                className={`px-3 py-2 rounded-[8px] transition-colors ${
                   pathname.startsWith("/blog")
                     ? "bg-[#f1efd9] text-[#274839] font-semibold"
                     : "hover:bg-[#f1efd9] hover:text-[#274839]"
@@ -380,7 +380,7 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
               <Link
                 href="/contact-us"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-3 py-2 rounded-xl transition-colors ${
+                className={`px-3 py-2 rounded-[8px] transition-colors ${
                   pathname === "/contact-us"
                     ? "bg-[#f1efd9] text-[#274839] font-semibold"
                     : "hover:bg-[#f1efd9] hover:text-[#274839]"
@@ -391,7 +391,7 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
               <Link
                 href="/testimonials"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-3 py-2 rounded-xl transition-colors ${
+                className={`px-3 py-2 rounded-[8px] transition-colors ${
                   pathname === "/testimonials"
                     ? "bg-[#f1efd9] text-[#274839] font-semibold"
                     : "hover:bg-[#f1efd9] hover:text-[#274839]"
@@ -406,21 +406,21 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
               <Link
                 href="/#gallery"
                 onClick={(e) => handleAnchorClick(e, "gallery")}
-                className="px-3 py-2 rounded-xl hover:bg-[#f1efd9] hover:text-[#274839] transition-colors"
+                className="px-3 py-2 rounded-[8px] hover:bg-[#f1efd9] hover:text-[#274839] transition-colors"
               >
                 Gallery
               </Link>
               <button
                 type="button"
                 onClick={handleBookDemo}
-                className="text-left px-3 py-2 rounded-xl hover:bg-[#f1efd9] hover:text-[#274839] transition-colors cursor-pointer"
+                className="text-left px-3 py-2 rounded-[8px] hover:bg-[#f1efd9] hover:text-[#274839] transition-colors cursor-pointer"
               >
                 Book A Demo
               </button>
               <Link
                 href="/privacy"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-3 py-2 rounded-xl transition-colors ${
+                className={`px-3 py-2 rounded-[8px] transition-colors ${
                   pathname === "/privacy"
                     ? "bg-[#f1efd9] text-[#274839] font-semibold"
                     : "hover:bg-[#f1efd9] hover:text-[#274839]"
@@ -431,7 +431,7 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
               <Link
                 href="/404"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-3 py-2 rounded-xl transition-colors ${
+                className={`px-3 py-2 rounded-[8px] transition-colors ${
                   pathname === "/404"
                     ? "bg-[#f1efd9] text-[#274839] font-semibold"
                     : "hover:bg-[#f1efd9] hover:text-[#274839]"
