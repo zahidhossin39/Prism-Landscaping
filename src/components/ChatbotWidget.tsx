@@ -40,10 +40,10 @@ const INITIAL_MESSAGES: Message[] = [
   },
 ];
 
-let messageCounter = 0;
+let messageIdSeq = 0;
 function createMessageId(prefix: string) {
-  messageCounter += 1;
-  return `${prefix}-${messageCounter}`;
+  messageIdSeq += 1;
+  return `${prefix}-${Date.now()}-${messageIdSeq}`;
 }
 
 function getCurrentTime() {
@@ -159,10 +159,83 @@ export default function ChatbotWidget() {
   };
 
   const handleClearChat = () => {
-    setMessages(INITIAL_MESSAGES);
+    setMessages([
+      {
+        id: createMessageId("welcome"),
+        role: "assistant",
+        content:
+          "Hello! Welcome to **Greenly Landscaping**. 🌿\n\nI'm your virtual customer service assistant. Ask me about our lawn mowing, shrub care, seasonal cleanups, pricing estimates, or how to get a free on-site quote!",
+        timestamp: getCurrentTime(),
+        suggestions: DEFAULT_SUGGESTIONS,
+      },
+    ]);
   };
 
-  // Helper to format basic markdown-like elements (bold, bullets, links) safely
+  // Helper to format markdown bold, links, emails, and phone numbers safely
+  const renderInlineFormatted = (rawText: string) => {
+    // Regex tokens: [label](url) OR **bold** OR email OR phone number
+    const regex = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|\+1\s*\(\d{3}\)\s*\d{3}-\d{4})/g;
+    const parts = rawText.split(regex);
+
+    return parts.map((part, idx) => {
+      if (!part) return null;
+
+      // Markdown links: [label](url)
+      const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      if (linkMatch) {
+        return (
+          <a
+            key={idx}
+            href={linkMatch[2]}
+            className="text-[#274839] font-medium underline hover:text-[#1b372a]"
+            target={linkMatch[2].startsWith("http") ? "_blank" : undefined}
+            rel={linkMatch[2].startsWith("http") ? "noopener noreferrer" : undefined}
+          >
+            {linkMatch[1]}
+          </a>
+        );
+      }
+
+      // Bold: **text**
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return (
+          <strong key={idx} className="font-semibold text-[#1b372a]">
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+
+      // Email address
+      if (/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(part)) {
+        return (
+          <a
+            key={idx}
+            href={`mailto:${part}`}
+            className="text-[#274839] font-medium underline hover:text-[#1b372a]"
+          >
+            {part}
+          </a>
+        );
+      }
+
+      // Phone number: +1 (000) 123-4567
+      if (/^\+1\s*\(\d{3}\)\s*\d{3}-\d{4}$/.test(part)) {
+        const telNumber = part.replace(/[^\d+]/g, "");
+        return (
+          <a
+            key={idx}
+            href={`tel:${telNumber}`}
+            className="font-semibold text-[#274839] underline decoration-[#bedd25] hover:text-[#1b372a]"
+          >
+            {part}
+          </a>
+        );
+      }
+
+      return <span key={idx}>{part}</span>;
+    });
+  };
+
   const formatMessageText = (content: string) => {
     const lines = content.split("\n");
     return lines.map((line, lineIdx) => {
@@ -175,32 +248,18 @@ export default function ChatbotWidget() {
       const isBullet = line.trim().startsWith("•") || line.trim().startsWith("-");
       const cleanLine = isBullet ? line.replace(/^[•-]\s*/, "") : line;
 
-      // Split bold markers **bold**
-      const parts = cleanLine.split(/(\*\*[^*]+\*\*)/g);
-
-      const renderedParts = parts.map((part, partIdx) => {
-        if (part.startsWith("**") && part.endsWith("**")) {
-          return (
-            <strong key={partIdx} className="font-semibold text-[#1b372a]">
-              {part.slice(2, -2)}
-            </strong>
-          );
-        }
-        return part;
-      });
-
       if (isBullet) {
         return (
           <div key={lineIdx} className="flex items-start gap-1.5 my-1 text-xs sm:text-sm">
             <span className="text-[#274839] font-bold select-none">•</span>
-            <div className="flex-1">{renderedParts}</div>
+            <div className="flex-1">{renderInlineFormatted(cleanLine)}</div>
           </div>
         );
       }
 
       return (
         <p key={lineIdx} className="my-1 text-xs sm:text-sm leading-relaxed">
-          {renderedParts}
+          {renderInlineFormatted(cleanLine)}
         </p>
       );
     });
@@ -213,7 +272,7 @@ export default function ChatbotWidget() {
         <div
           role="dialog"
           aria-label="Greenly AI Customer Support Chat"
-          className="mb-4 w-[calc(100vw-2.5rem)] sm:w-[390px] md:w-[410px] h-[540px] max-h-[82vh] bg-[#fbfaf4] rounded-2xl shadow-2xl border border-[#274839]/20 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200"
+          className="mb-4 w-[calc(100vw-2.5rem)] max-w-[410px] sm:w-[390px] md:w-[410px] h-[540px] max-h-[82vh] bg-[#fbfaf4] rounded-2xl shadow-2xl border border-[#274839]/20 flex flex-col overflow-hidden animate-chat-window"
         >
           {/* Header */}
           <div className="bg-[#274839] text-white px-4 py-3.5 flex items-center justify-between border-b border-[#345c4a] select-none">
@@ -236,9 +295,9 @@ export default function ChatbotWidget() {
                     AI
                   </span>
                 </div>
-                <p className="text-[11px] text-[#f2f1e7]/70 flex items-center gap-1">
+                <p className="text-[11px] text-[#f2f1e7]/80 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
-                  Online • Customer Support
+                  Online • Greenly Support
                 </p>
               </div>
             </div>
@@ -420,7 +479,7 @@ export default function ChatbotWidget() {
           className={`relative flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all duration-300 cursor-pointer ${
             isOpen
               ? "bg-[#1b372a] text-white rotate-90 scale-95"
-              : "bg-[#274839] text-[#bedd25] hover:bg-[#1b372a] hover:scale-108 ring-4 ring-[#bedd25]/30 hover:ring-[#bedd25]/60"
+              : "bg-[#274839] text-[#bedd25] hover:bg-[#1b372a] hover:scale-105 ring-4 ring-[#bedd25]/30 hover:ring-[#bedd25]/60"
           }`}
         >
           {isOpen ? (
