@@ -9,6 +9,21 @@ interface QuoteModalProps {
   defaultService?: string;
 }
 
+const AVAILABLE_SERVICES = [
+  "Book A Demo",
+  "Garden Maintenance",
+  "Shrub Trimming",
+  "Landscaping Design",
+  "Mulching",
+  "Irrigation Installation",
+  "Soil Testing",
+  "Lawn Aeration",
+  "Seasonal Cleanups",
+  "Pest Control",
+  "Lawn Mowing",
+  "Tree Pruning",
+];
+
 export default function QuoteModal({ isOpen, onClose, defaultService = "Lawn Mowing" }: QuoteModalProps) {
   const [formData, setFormData] = useState({
     name: "",
@@ -157,12 +172,20 @@ export default function QuoteModal({ isOpen, onClose, defaultService = "Lawn Mow
                   className="w-full px-4 py-2.5 rounded-xl border border-[#d8d4bf] bg-[#f9f8f2] text-[#1f1f1f] focus:outline-none focus:ring-2 focus:ring-[#274839] transition-all text-sm cursor-pointer"
                 >
                   <option value="Book A Demo">Book A Demo / Consultation</option>
-                  <option value="Shrub Trimming">Shrub Trimming</option>
                   <option value="Garden Maintenance">Garden Maintenance</option>
+                  <option value="Shrub Trimming">Shrub Trimming</option>
                   <option value="Landscaping Design">Landscaping Design</option>
-                  <option value="Lawn Mowing">Lawn Mowing</option>
+                  <option value="Mulching">Mulching</option>
+                  <option value="Irrigation Installation">Irrigation Installation</option>
+                  <option value="Soil Testing">Soil Testing</option>
+                  <option value="Lawn Aeration">Lawn Aeration</option>
                   <option value="Seasonal Cleanups">Seasonal Cleanups</option>
+                  <option value="Pest Control">Pest Control</option>
+                  <option value="Lawn Mowing">Lawn Mowing</option>
                   <option value="Tree Pruning">Tree Pruning</option>
+                  {!AVAILABLE_SERVICES.includes(formData.service) && (
+                    <option value={formData.service}>{formData.service}</option>
+                  )}
                 </select>
               </div>
 
