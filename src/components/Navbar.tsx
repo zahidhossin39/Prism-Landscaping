@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronDown, ArrowUpRight, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 
 interface NavbarProps {
   onOpenQuote?: (service?: string) => void;
@@ -106,9 +106,9 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-40 w-full px-4 sm:px-8 pt-4 sm:pt-6 transition-all duration-300">
       <div
-        className={`max-w-[1204px] mx-auto rounded-full px-4 sm:px-6 py-2.5 sm:py-3 transition-all duration-300 flex items-center justify-between ${
+        className={`max-w-[1204px] mx-auto rounded-[10px] px-4 sm:px-5 md:pl-5 md:pr-[13px] py-2.5 sm:py-[13px] transition-all duration-300 flex items-center justify-between ${
           isScrolled
-            ? "bg-[#ffffff]/90 backdrop-blur-md shadow-md border border-[#e5e3d7]"
+            ? "bg-[#ffffff]/95 backdrop-blur-md shadow-sm border border-[#e5e3d7]"
             : "bg-[#ffffff] shadow-sm border border-[#e8e6dc]"
         }`}
       >
@@ -311,18 +311,15 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
         <div className="flex items-center gap-3">
           <button
             onClick={handleFreeQuote}
-            className="flex items-center gap-2.5 bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] pl-4 sm:pl-5 pr-2.5 sm:pr-3 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 group shadow-sm hover:shadow"
+            className="bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] px-4 sm:px-[21px] py-2 sm:py-[8px] rounded-[8px] text-xs sm:text-[15px] font-medium transition-all duration-200 shadow-sm hover:shadow cursor-pointer"
           >
-            <span>Get A Free Quote</span>
-            <span className="w-6 h-6 rounded-full bg-[#1f1f1f] text-white flex items-center justify-center transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </span>
+            Get A Free Quote
           </button>
 
           {/* Mobile hamburger button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-full text-[#1f1f1f] hover:bg-[#f1efd9] transition-colors"
+            className="md:hidden p-2 rounded-[8px] text-[#1f1f1f] hover:bg-[#f1efd9] transition-colors"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -332,7 +329,7 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden mt-2 mx-auto max-w-[1204px] bg-[#ffffff] rounded-3xl shadow-2xl border border-[#e5e3d7] p-5 space-y-4 animate-in fade-in slide-in-from-top-3 duration-200">
+        <div className="md:hidden mt-2 mx-auto max-w-[1204px] bg-[#ffffff] rounded-2xl shadow-xl border border-[#e5e3d7] p-5 space-y-4 animate-in fade-in slide-in-from-top-3 duration-200">
           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm font-medium text-[#1f1f1f]">
             {/* Left column */}
             <div className="flex flex-col space-y-1">
@@ -448,12 +445,9 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
           <div className="pt-2 border-t border-[#f1efd9]">
             <button
               onClick={handleFreeQuote}
-              className="w-full py-3 px-5 rounded-full bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] font-semibold text-sm transition-all flex items-center justify-center gap-2"
+              className="w-full py-2.5 px-5 rounded-[8px] bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] font-medium text-sm transition-all text-center cursor-pointer shadow-sm"
             >
-              <span>Get A Free Quote</span>
-              <div className="w-6 h-6 rounded-full bg-[#1f1f1f] text-white flex items-center justify-center">
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </div>
+              Get A Free Quote
             </button>
           </div>
         </div>
