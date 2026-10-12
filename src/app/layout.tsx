@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
+import ChatbotWidget from "@/components/ChatbotWidget";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -32,6 +33,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${playfair.variable} scroll-smooth`}>
       <body className="font-sans antialiased text-[#1f1f1f] bg-[#f2f1e7] selection:bg-[#bedd25] selection:text-[#1f1f1f]">
         {children}
+        <ChatbotWidget />
       </body>
     </html>
   );
