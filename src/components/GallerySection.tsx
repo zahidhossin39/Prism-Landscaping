@@ -2,11 +2,13 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight, X, ZoomIn } from "lucide-react";
 
 interface GallerySectionProps {
-  onOpenQuote: () => void;
+  onOpenQuote?: () => void;
   buttonText?: string;
+  buttonHref?: string;
 }
 
 const galleryImages = [
@@ -21,6 +23,7 @@ const galleryImages = [
 export default function GallerySection({
   onOpenQuote,
   buttonText = "View All Gallery",
+  buttonHref = "/gallery",
 }: GallerySectionProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -38,15 +41,27 @@ export default function GallerySection({
             </h2>
           </div>
 
-          <button
-            onClick={onOpenQuote}
-            className="inline-flex items-center gap-3 bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] pl-6 pr-3.5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 group shadow-sm hover:shadow cursor-pointer"
-          >
-            <span>{buttonText}</span>
-            <span className="w-6 h-6 rounded-full bg-[#1f1f1f] text-white flex items-center justify-center transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </span>
-          </button>
+          {buttonHref ? (
+            <Link
+              href={buttonHref}
+              className="inline-flex items-center gap-3 bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] pl-6 pr-3.5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 group shadow-sm hover:shadow cursor-pointer"
+            >
+              <span>{buttonText}</span>
+              <span className="w-6 h-6 rounded-full bg-[#1f1f1f] text-white flex items-center justify-center transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </span>
+            </Link>
+          ) : (
+            <button
+              onClick={onOpenQuote}
+              className="inline-flex items-center gap-3 bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] pl-6 pr-3.5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 group shadow-sm hover:shadow cursor-pointer"
+            >
+              <span>{buttonText}</span>
+              <span className="w-6 h-6 rounded-full bg-[#1f1f1f] text-white flex items-center justify-center transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </span>
+            </button>
+          )}
         </div>
 
         {/* 3 Interlocking Asymmetric Columns */}

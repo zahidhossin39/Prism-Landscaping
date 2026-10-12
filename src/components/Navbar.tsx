@@ -85,22 +85,6 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
     setMobileMenuOpen(false);
   }
 
-  const handleAnchorClick = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    anchorId: string
-  ) => {
-    setDropdownOpen(false);
-    setMobileMenuOpen(false);
-    if (pathname === "/") {
-      e.preventDefault();
-      const el = document.getElementById(anchorId);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-        window.history.pushState(null, "", `/#${anchorId}`);
-      }
-    }
-  };
-
   const handleBookDemo = () => {
     setDropdownOpen(false);
     setMobileMenuOpen(false);
@@ -254,9 +238,13 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
                   {/* Right Column */}
                   <div className="flex flex-col space-y-3.5 text-left font-normal">
                     <Link
-                      href="/#gallery"
-                      onClick={(e) => handleAnchorClick(e, "gallery")}
-                      className="text-[#1f1f1f] hover:text-[#274839] transition-colors"
+                      href="/gallery"
+                      onClick={() => setDropdownOpen(false)}
+                      className={`transition-colors ${
+                        pathname === "/gallery"
+                          ? "text-[#274839] font-medium"
+                          : "text-[#1f1f1f] hover:text-[#274839]"
+                      }`}
                     >
                       Gallery
                     </Link>
@@ -434,9 +422,13 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
             {/* Right column */}
             <div className="flex flex-col space-y-1">
               <Link
-                href="/#gallery"
-                onClick={(e) => handleAnchorClick(e, "gallery")}
-                className="px-3 py-2 rounded-[8px] hover:bg-[#f1efd9] hover:text-[#274839] transition-colors"
+                href="/gallery"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`px-3 py-2 rounded-[8px] transition-colors ${
+                  pathname === "/gallery"
+                    ? "bg-[#f1efd9] text-[#274839] font-semibold"
+                    : "hover:bg-[#f1efd9] hover:text-[#274839]"
+                }`}
               >
                 Gallery
               </Link>
