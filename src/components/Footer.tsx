@@ -72,36 +72,36 @@ export default function Footer({ onOpenQuote }: FooterProps) {
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-white/75">
               <li>
-                <button
-                  onClick={() => onOpenQuote("Lawn Mowing")}
-                  className="hover:text-[#bedd25] transition-colors text-left"
+                <Link
+                  href="/service/lawn-mowing"
+                  className="hover:text-[#bedd25] transition-colors block text-left"
                 >
                   Lawn Mowing
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => onOpenQuote("Garden Maintenance")}
-                  className="hover:text-[#bedd25] transition-colors text-left"
+                <Link
+                  href="/service/garden-maintenance"
+                  className="hover:text-[#bedd25] transition-colors block text-left"
                 >
                   Garden Maintenance
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => onOpenQuote("Shrub Trimming")}
-                  className="hover:text-[#bedd25] transition-colors text-left"
+                <Link
+                  href="/service/shrub-trimming"
+                  className="hover:text-[#bedd25] transition-colors block text-left"
                 >
                   Tree & Shrub Trimming
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => onOpenQuote("Seasonal Cleanups")}
-                  className="hover:text-[#bedd25] transition-colors text-left"
+                <Link
+                  href="/service/seasonal-cleanup"
+                  className="hover:text-[#bedd25] transition-colors block text-left"
                 >
                   Seasonal Cleanups
-                </button>
+                </Link>
               </li>
             </ul>
           </div>

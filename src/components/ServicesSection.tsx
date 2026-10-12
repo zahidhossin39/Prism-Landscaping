@@ -6,31 +6,35 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
 interface ServicesSectionProps {
-  onOpenQuote: (serviceName?: string) => void;
+  onOpenQuote?: (serviceName?: string) => void;
 }
 
 const services = [
   {
     title: "Shrub Trimming",
+    slug: "shrub-trimming",
     image: "/assets/service-shrub.png",
     description:
       "Maintain a neat vibrant garden with our expert shrub trimming services. Schedule.",
   },
   {
     title: "Garden Maintenance",
+    slug: "garden-maintenance",
     image: "/assets/service-garden.png",
     description:
       "With our full-service care you can keep garden lush lively and exquisitely arranged.",
   },
   {
     title: "Landscaping Design",
+    slug: "landscaping-design",
     image: "/assets/service-landscaping.png",
     description:
       "Elevate your property's appeal with Greenly premier landscaping design solutions. Reach.",
   },
 ];
 
-export default function ServicesSection({ onOpenQuote }: ServicesSectionProps) {
+export default function ServicesSection(props: ServicesSectionProps) {
+  void props;
   return (
     <section id="services" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8">
       <div className="max-w-[1204px] mx-auto text-center">
@@ -47,10 +51,10 @@ export default function ServicesSection({ onOpenQuote }: ServicesSectionProps) {
         {/* 3 Services Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-left">
           {services.map((srv, idx) => (
-            <div
+            <Link
               key={idx}
-              onClick={() => onOpenQuote(srv.title)}
-              className="group cursor-pointer rounded-[28px] overflow-hidden relative aspect-[3/3.8] sm:aspect-[3/3.9] shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 border border-[#e2dec9]"
+              href={`/service/${srv.slug}`}
+              className="group cursor-pointer rounded-[28px] overflow-hidden relative aspect-[3/3.8] sm:aspect-[3/3.9] shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 border border-[#e2dec9] block"
             >
               <Image
                 src={srv.image}
@@ -70,7 +74,7 @@ export default function ServicesSection({ onOpenQuote }: ServicesSectionProps) {
                   <ArrowUpRight className="w-4 h-4" />
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

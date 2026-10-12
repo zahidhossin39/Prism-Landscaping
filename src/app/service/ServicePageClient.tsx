@@ -2,83 +2,15 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import CtaBanner from "@/components/CtaBanner";
 import Footer from "@/components/Footer";
 import QuoteModal from "@/components/QuoteModal";
+import { services } from "@/data/services";
 
-interface ServiceItem {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-}
-
-const allServices: ServiceItem[] = [
-  {
-    id: "shrub-trimming",
-    title: "Shrub Trimming",
-    description:
-      "Maintain a neat vibrant garden with our expert shrub trimming services. Schedule.",
-    image: "/assets/service-card-shrub.png",
-  },
-  {
-    id: "garden-maintenance",
-    title: "Garden Maintenance",
-    description:
-      "With our full-service care you can keep garden lush lively and exquisitely arranged.",
-    image: "/assets/service-card-garden.png",
-  },
-  {
-    id: "landscaping-design",
-    title: "Landscaping Design",
-    description:
-      "Elevate your property's appeal with Greenly premier landscaping design solutions. Reach.",
-    image: "/assets/service-card-landscaping.png",
-  },
-  {
-    id: "mulching",
-    title: "Mulching",
-    description:
-      "Enhance moisture retention and suppress weeds in your garden beds premium.",
-    image: "/assets/service-card-mulching.png",
-  },
-  {
-    id: "irrigation-installation",
-    title: "Irrigation Installation",
-    description:
-      "Optimise water usage and ensure your plants thrive with our efficient irrigation installation.",
-    image: "/assets/service-card-irrigation.png",
-  },
-  {
-    id: "soil-testing",
-    title: "Soil Testing",
-    description:
-      "Ensure your plants get the right nutrients with our comprehensive soil testing and amendment.",
-    image: "/assets/service-card-soil.png",
-  },
-  {
-    id: "lawn-aeration",
-    title: "Lawn Aeration",
-    description:
-      "Improve the health of your lawn by allowing air water and nutrients to penetrate.",
-    image: "/assets/service-card-aeration.png",
-  },
-  {
-    id: "seasonal-cleanup",
-    title: "Seasonal Cleanup",
-    description:
-      "Prepare your garden for the changing seasons with our thorough seasonal cleanup services.",
-    image: "/assets/service-card-cleanup.png",
-  },
-  {
-    id: "pest-control",
-    title: "Pest Control",
-    description:
-      "Protect your garden from harmful pests with our environmentally friendly pest control.",
-    image: "/assets/service-card-pest.png",
-  },
-];
+// The 9 services showcased on the services overview grid
+const allServices = services.filter((s) => s.slug !== "lawn-mowing");
 
 export default function ServicePageClient() {
   const [quoteModalOpen, setQuoteModalOpen] = useState(false);
@@ -234,15 +166,15 @@ export default function ServicePageClient() {
           {/* 6-Card (or 9 on expanded) Services Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10 sm:gap-y-12">
             {displayedServices.map((service) => (
-              <div
-                key={service.id}
-                onClick={() => handleOpenQuote(service.title)}
+              <Link
+                key={service.slug}
+                href={`/service/${service.slug}`}
                 className="group cursor-pointer flex flex-col"
               >
                 {/* Image Container with Framer exact portrait aspect ratio (1552/1812) */}
                 <div className="relative w-full aspect-[1552/1812] rounded-[12px] overflow-hidden bg-[#e5e3d7] shadow-sm">
                   <Image
-                    src={service.image}
+                    src={service.cardImage}
                     alt={service.title}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 388px"
@@ -259,7 +191,7 @@ export default function ServicePageClient() {
                     {service.description}
                   </p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
