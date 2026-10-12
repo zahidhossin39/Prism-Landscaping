@@ -310,7 +310,7 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
         <div className="flex items-center gap-3">
           <button
             onClick={handleFreeQuote}
-            className="bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] px-3 sm:px-[21px] py-2 sm:py-[8px] rounded-[8px] text-xs sm:text-[16px] font-medium tracking-[-0.2px] transition-all duration-200 shadow-sm hover:shadow cursor-pointer whitespace-nowrap"
+            className="hidden md:inline-flex items-center justify-center bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] px-[21px] py-[8px] rounded-[8px] text-[16px] font-medium tracking-[-0.2px] transition-all duration-200 shadow-sm hover:shadow cursor-pointer whitespace-nowrap"
           >
             Get A Free Quote
           </button>
