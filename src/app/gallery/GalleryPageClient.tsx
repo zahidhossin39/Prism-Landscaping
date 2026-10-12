@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import CtaBanner from "@/components/CtaBanner";
@@ -67,13 +67,13 @@ const column2: GalleryItem[] = [
   {
     id: "col2-3",
     src: "/assets/gallery-grid-7.png",
-    title: "Greenhouse Seedlings & Organic Care",
+    title: "Family Garden Care & Flower Watering",
     aspect: "tall",
   },
   {
     id: "col2-4",
     src: "/assets/gallery-grid-8.png",
-    title: "Nursery Hedge Trimming & Shrub Care",
+    title: "Professional Hedge Trimming & Shrub Care",
     aspect: "short",
   },
 ];
@@ -89,19 +89,19 @@ const column3: GalleryItem[] = [
   {
     id: "col3-2",
     src: "/assets/gallery-grid-10.png",
-    title: "Targeted Organic Pest Spraying",
+    title: "Targeted Organic Pest Spraying & Shrub Care",
     aspect: "tall",
   },
   {
     id: "col3-3",
     src: "/assets/gallery-grid-11.png",
-    title: "Mechanical Turf Aeration & Seeding",
+    title: "Mechanical Turf Seeding & Fertilizing",
     aspect: "short",
   },
   {
     id: "col3-4",
     src: "/assets/gallery-grid-12.png",
-    title: "Evergreen Seedling Rows Maintenance",
+    title: "Evergreen Nursery Seedling Cultivation",
     aspect: "tall",
   },
 ];
@@ -127,6 +127,10 @@ export default function GalleryPageClient() {
   const [quoteModalOpen, setQuoteModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("Lawn Mowing");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  // Touch gesture refs for mobile swipe
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
 
   const handleOpenQuote = (service?: string) => {
     if (service) setSelectedService(service);
@@ -156,6 +160,16 @@ export default function GalleryPageClient() {
     );
   }, []);
 
+  // Lock body scroll when lightbox modal is open
+  useEffect(() => {
+    if (lightboxIndex !== null) {
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "";
+      };
+    }
+  }, [lightboxIndex]);
+
   // Keyboard navigation for lightbox
   useEffect(() => {
     if (lightboxIndex === null) return;
@@ -174,6 +188,29 @@ export default function GalleryPageClient() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [lightboxIndex, closeLightbox, showPrev, showNext]);
 
+  // Touch swipe gesture handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const diffX = touchStartX.current - e.changedTouches[0].clientX;
+    const diffY = touchStartY.current - e.changedTouches[0].clientY;
+
+    // Horizontal swipe threshold: 45px
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 45) {
+      if (diffX > 0) {
+        showNext(); // Swipe left to next image
+      } else {
+        showPrev(); // Swipe right to previous image
+      }
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
   const currentLightboxItem =
     lightboxIndex !== null ? allGalleryItems[lightboxIndex] : null;
 
@@ -187,7 +224,7 @@ export default function GalleryPageClient() {
         <div className="max-w-[1204px] mx-auto text-center">
           <h1 className="text-[38px] sm:text-[50px] lg:text-[64px] font-medium text-[#1f1f1f] tracking-[-1.5px] lg:tracking-[-2px] leading-[1.15] max-w-4xl mx-auto">
             Our Landscaping{" "}
-            <span className="font-serif italic font-semibold text-[#274839]">
+            <span className="font-serif italic font-normal text-[#1f1f1f]">
               Gallery
             </span>
           </h1>
@@ -205,7 +242,7 @@ export default function GalleryPageClient() {
         <div className="max-w-[1204px] mx-auto">
           <div
             onClick={() => openLightbox(featuredPhoto)}
-            className="group cursor-pointer relative aspect-[16/9] sm:aspect-[2408/1278] w-full rounded-[20px] sm:rounded-[32px] overflow-hidden bg-black/5 shadow-sm border border-[#e5e3d7] transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+            className="group cursor-pointer relative aspect-[2408/1278] w-full rounded-[12px] overflow-hidden bg-black/5 shadow-sm border border-[#e5e3d7] transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
           >
             <Image
               src={featuredPhoto.src}
@@ -227,15 +264,17 @@ export default function GalleryPageClient() {
       {/* 4. 3-Column Asymmetric Masonry Gallery Grid */}
       <section className="py-6 sm:py-10 px-4 sm:px-6 md:px-8">
         <div className="max-w-[1204px] mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
             {/* Column 1: Short top, tall, short, tall */}
-            <div className="flex flex-col gap-5 sm:gap-6">
+            <div className="flex flex-col gap-5">
               {column1.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => openLightbox(item)}
-                  className={`group cursor-pointer relative rounded-2xl sm:rounded-[24px] overflow-hidden bg-black/5 shadow-sm border border-[#e5e3d7] transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
-                    item.aspect === "short" ? "aspect-[4/3]" : "aspect-[3/4]"
+                  className={`group cursor-pointer relative rounded-[10px] overflow-hidden bg-black/5 shadow-sm border border-[#e5e3d7] transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+                    item.aspect === "short"
+                      ? "aspect-[776/532]"
+                      : "aspect-[776/966]"
                   }`}
                 >
                   <Image
@@ -255,13 +294,15 @@ export default function GalleryPageClient() {
             </div>
 
             {/* Column 2: Tall top, short, tall, short */}
-            <div className="flex flex-col gap-5 sm:gap-6">
+            <div className="flex flex-col gap-5">
               {column2.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => openLightbox(item)}
-                  className={`group cursor-pointer relative rounded-2xl sm:rounded-[24px] overflow-hidden bg-black/5 shadow-sm border border-[#e5e3d7] transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
-                    item.aspect === "short" ? "aspect-[4/3]" : "aspect-[3/4]"
+                  className={`group cursor-pointer relative rounded-[10px] overflow-hidden bg-black/5 shadow-sm border border-[#e5e3d7] transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+                    item.aspect === "short"
+                      ? "aspect-[776/532]"
+                      : "aspect-[776/966]"
                   }`}
                 >
                   <Image
@@ -281,13 +322,15 @@ export default function GalleryPageClient() {
             </div>
 
             {/* Column 3: Short top, tall, short, tall */}
-            <div className="flex flex-col gap-5 sm:gap-6">
+            <div className="flex flex-col gap-5">
               {column3.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => openLightbox(item)}
-                  className={`group cursor-pointer relative rounded-2xl sm:rounded-[24px] overflow-hidden bg-black/5 shadow-sm border border-[#e5e3d7] transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
-                    item.aspect === "short" ? "aspect-[4/3]" : "aspect-[3/4]"
+                  className={`group cursor-pointer relative rounded-[10px] overflow-hidden bg-black/5 shadow-sm border border-[#e5e3d7] transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+                    item.aspect === "short"
+                      ? "aspect-[776/532]"
+                      : "aspect-[776/966]"
                   }`}
                 >
                   <Image
@@ -326,13 +369,18 @@ export default function GalleryPageClient() {
       {/* Lightbox Modal */}
       {currentLightboxItem && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 sm:p-6 animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image gallery lightbox"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 sm:p-6 animate-in fade-in duration-200 select-none"
           onClick={closeLightbox}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
           {/* Close button */}
           <button
             onClick={closeLightbox}
-            className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 p-2.5 rounded-full bg-black/60 text-white hover:bg-black/80 hover:text-[#bedd25] transition-colors cursor-pointer"
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 p-2.5 rounded-full bg-black/60 text-white hover:bg-black/80 hover:text-[#bedd25] transition-colors cursor-pointer"
             aria-label="Close Lightbox"
           >
             <X className="w-6 h-6" />
@@ -344,7 +392,7 @@ export default function GalleryPageClient() {
               e.stopPropagation();
               showPrev();
             }}
-            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-black/60 text-white hover:bg-black/80 hover:text-[#bedd25] transition-colors cursor-pointer"
+            className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-black/60 text-white hover:bg-black/80 hover:text-[#bedd25] transition-colors cursor-pointer"
             aria-label="Previous image"
           >
             <ChevronLeft className="w-6 h-6" />
@@ -356,7 +404,7 @@ export default function GalleryPageClient() {
               e.stopPropagation();
               showNext();
             }}
-            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-black/60 text-white hover:bg-black/80 hover:text-[#bedd25] transition-colors cursor-pointer"
+            className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-black/60 text-white hover:bg-black/80 hover:text-[#bedd25] transition-colors cursor-pointer"
             aria-label="Next image"
           >
             <ChevronRight className="w-6 h-6" />
@@ -367,7 +415,7 @@ export default function GalleryPageClient() {
             className="relative max-w-5xl max-h-[85vh] w-full h-[70vh] sm:h-[82vh] flex flex-col items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative w-full h-full rounded-2xl overflow-hidden">
+            <div className="relative w-full h-full rounded-[12px] overflow-hidden">
               <Image
                 src={currentLightboxItem.src}
                 alt={currentLightboxItem.title}
