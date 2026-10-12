@@ -91,6 +91,22 @@ npm run start
 
 ---
 
+## 👥 Contributors
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/themasum-com">
+        <img src="https://github.com/themasum-com.png" width="100px;" alt="Masum Khan" style="border-radius:50%;" /><br />
+        <sub><b>Masum Khan</b></sub>
+      </a><br />
+      <sub>Creator & Maintainer</sub>
+    </td>
+  </tr>
+</table>
+
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License.
