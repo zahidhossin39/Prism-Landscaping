@@ -1,19 +1,15 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useId } from "react";
 import {
-  Phone,
   PhoneOff,
   Mic,
   MicOff,
-  Send,
   ChevronDown,
+  ChevronLeft,
   Minimize2,
-  RotateCcw,
-  Sparkles,
-  User,
   Check,
-  MessageSquare,
+  MessagesSquare,
 } from "lucide-react";
 
 interface Message {
@@ -36,21 +32,12 @@ const LANGUAGES: LanguageOption[] = [
   { code: "de", label: "Deutsch" },
 ];
 
-const DEFAULT_SUGGESTIONS = [
-  "Get A Free Quote",
-  "Explore Services",
-  "Pricing & Estimates",
-  "Emergency Hotline",
-];
-
 const INITIAL_MESSAGES: Message[] = [
   {
     id: "welcome-1",
     role: "assistant",
-    content:
-      "Hello. Welcome to **Greenly Landscaping**.\n\nI can answer questions about lawn mowing, shrub trimming, seasonal cleanups, irrigation, soil testing, pricing, blog guides, gallery projects, or setting up a free quote.",
+    content: "Hi! How can I help you with Greenly today?",
     timestamp: "Just now",
-    suggestions: DEFAULT_SUGGESTIONS,
   },
 ];
 
@@ -161,7 +148,7 @@ function PhoneHandsetIcon({ className = "w-5 h-5 fill-neutral-900" }: { classNam
 }
 
 /**
- * Solid paper airplane silhouette matching send button in Screenshot 2
+ * Solid paper airplane silhouette matching send button in Screenshots 2 and 3
  */
 function SolidPaperPlaneIcon({ className = "w-4 h-4 fill-neutral-400" }: { className?: string }) {
   return (
@@ -237,12 +224,13 @@ function VoiceOrb({
   children?: React.ReactNode;
 }) {
   const isSm = size === "sm";
+  const filterId = useId();
 
   return (
     <div
       className={`relative rounded-full select-none flex items-center justify-center shrink-0 ${
         isSm
-          ? "w-9 h-9 shadow-inner"
+          ? "w-8.5 h-8.5 shadow-xs"
           : "w-44 h-44 sm:w-46 sm:h-46 shadow-[0_14px_45px_rgba(2,132,199,0.25)]"
       } ${className}`}
     >
@@ -280,7 +268,7 @@ function VoiceOrb({
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden="true"
         >
-          <filter id={`orb-noise-${isSm ? "sm" : "lg"}`}>
+          <filter id={filterId}>
             <feTurbulence
               type="fractalNoise"
               baseFrequency="0.75"
@@ -289,15 +277,15 @@ function VoiceOrb({
             />
             <feColorMatrix type="saturate" values="0" />
           </filter>
-          <rect width="100%" height="100%" filter={`url(#orb-noise-${isSm ? "sm" : "lg"})`} />
+          <rect width="100%" height="100%" filter={`url(#${filterId})`} />
         </svg>
 
         {/* Top-left specular highlight */}
         <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/10 to-white/35 pointer-events-none" />
       </div>
 
-      {/* Interactive center content (e.g. Call Button) */}
-      {children && <div className="relative z-10">{children}</div>}
+      {/* Interactive center content (e.g. Call Button or Back Chevron) */}
+      {children && <div className="relative z-10 flex items-center justify-center">{children}</div>}
     </div>
   );
 }
@@ -602,7 +590,6 @@ export default function ChatbotWidget() {
           content:
             "I am having trouble connecting to the service. You can call our office directly at **+1 (000) 123-4567** or email **info@gardencare.com**.",
           timestamp: getCurrentTime(),
-          suggestions: ["Contact Information", "Explore Services"],
         };
         setMessages((prev) => [...prev, errorMessage]);
 
@@ -673,19 +660,6 @@ export default function ChatbotWidget() {
     }
   };
 
-  const handleClearChat = () => {
-    setMessages([
-      {
-        id: createMessageId("welcome"),
-        role: "assistant",
-        content:
-          "Hello. Welcome to **Greenly Landscaping**.\n\nI can answer questions about lawn mowing, shrub trimming, seasonal cleanups, irrigation, soil testing, pricing, blog guides, gallery projects, or setting up a free quote.",
-        timestamp: getCurrentTime(),
-        suggestions: DEFAULT_SUGGESTIONS,
-      },
-    ]);
-  };
-
   // Helper to format markdown bold, links, emails, phone numbers, and internal paths safely
   const renderInlineFormatted = (rawText: string) => {
     const regex =
@@ -702,7 +676,7 @@ export default function ChatbotWidget() {
           <a
             key={idx}
             href={linkMatch[2]}
-            className="text-[#274839] font-medium underline hover:text-[#1b372a]"
+            className="text-neutral-900 font-medium underline underline-offset-2 hover:text-black"
             target={linkMatch[2].startsWith("http") ? "_blank" : undefined}
             rel={linkMatch[2].startsWith("http") ? "noopener noreferrer" : undefined}
           >
@@ -714,7 +688,7 @@ export default function ChatbotWidget() {
       // Bold: **text**
       if (part.startsWith("**") && part.endsWith("**")) {
         return (
-          <strong key={idx} className="font-semibold text-[#1b372a]">
+          <strong key={idx} className="font-semibold text-neutral-900">
             {part.slice(2, -2)}
           </strong>
         );
@@ -726,7 +700,7 @@ export default function ChatbotWidget() {
           <a
             key={idx}
             href={part}
-            className="text-[#274839] font-semibold underline decoration-[#bedd25] hover:text-[#1b372a]"
+            className="text-neutral-900 font-medium underline underline-offset-2 hover:text-black"
           >
             {part}
           </a>
@@ -739,7 +713,7 @@ export default function ChatbotWidget() {
           <a
             key={idx}
             href={`mailto:${part}`}
-            className="text-[#274839] font-medium underline hover:text-[#1b372a]"
+            className="text-neutral-900 font-medium underline underline-offset-2 hover:text-black"
           >
             {part}
           </a>
@@ -753,7 +727,7 @@ export default function ChatbotWidget() {
           <a
             key={idx}
             href={`tel:${telNumber}`}
-            className="font-semibold text-[#274839] underline decoration-[#bedd25] hover:text-[#1b372a]"
+            className="text-neutral-900 font-semibold underline underline-offset-2 hover:text-black"
           >
             {part}
           </a>
@@ -776,15 +750,15 @@ export default function ChatbotWidget() {
 
       if (isBullet) {
         return (
-          <div key={lineIdx} className="flex items-start gap-1.5 my-1 text-xs sm:text-sm">
-            <span className="text-[#274839] font-bold select-none">•</span>
+          <div key={lineIdx} className="flex items-start gap-1.5 my-1 text-sm">
+            <span className="text-neutral-500 font-bold select-none">•</span>
             <div className="flex-1">{renderInlineFormatted(cleanLine)}</div>
           </div>
         );
       }
 
       return (
-        <p key={lineIdx} className="my-1 text-xs sm:text-sm leading-relaxed">
+        <p key={lineIdx} className="my-1 text-sm leading-relaxed">
           {renderInlineFormatted(cleanLine)}
         </p>
       );
@@ -802,8 +776,8 @@ export default function ChatbotWidget() {
           className="mb-4 w-[calc(100vw-2.5rem)] max-w-[370px] sm:w-[370px] h-[520px] max-h-[85vh] bg-white rounded-[32px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.18)] border border-neutral-200/80 flex flex-col overflow-hidden animate-chat-window transition-all"
         >
           {viewMode === "voice" ? (
-            /* ================= VIEW 1: VOICE AGENT CARD (Matches Screenshot 2) ================= */
-            <div className="flex-1 flex flex-col justify-between p-6 overflow-hidden relative">
+            /* ================= VIEW 1: VOICE AGENT CARD (Matches Screenshots 2 & 4) ================= */
+            <div className="flex-1 flex flex-col justify-between p-6 overflow-hidden relative bg-white">
               {/* Top Header */}
               <div className="relative flex items-center justify-between w-full z-20">
                 {/* Left: Chat history toggle */}
@@ -812,12 +786,9 @@ export default function ChatbotWidget() {
                   onClick={() => setViewMode("chat")}
                   title="Open chat messages"
                   aria-label="Open chat messages"
-                  className="w-9 h-9 rounded-full bg-neutral-100/90 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer shadow-2xs relative"
+                  className="w-9 h-9 rounded-full bg-neutral-100/90 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
                 >
-                  <MessageSquare className="w-4 h-4" />
-                  {messages.length > 1 && (
-                    <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#274839]" />
-                  )}
+                  <MessagesSquare className="w-4 h-4" />
                 </button>
 
                 {/* Center: Language Selector Pill (Horizontally Centered in Card) */}
@@ -931,55 +902,33 @@ export default function ChatbotWidget() {
                         {isListening ? "Listening..." : isSpeaking ? "Speaking..." : "Connected"} •{" "}
                         {formatDuration(callDuration)}
                       </span>
-                      <div className="flex items-center gap-0.5 ml-1">
-                        <span className="w-0.5 bg-neutral-600 rounded-full animate-sound-wave-1" />
-                        <span className="w-0.5 bg-neutral-600 rounded-full animate-sound-wave-2" />
-                        <span className="w-0.5 bg-neutral-600 rounded-full animate-sound-wave-3" />
-                        <span className="w-0.5 bg-neutral-600 rounded-full animate-sound-wave-4" />
-                      </div>
-                    </div>
-
-                    {/* Spoken Transcript Preview */}
-                    <p className="mt-2 text-xs text-neutral-600 line-clamp-2 px-2 italic min-h-[32px]">
-                      &quot;{voiceTranscript || (isListening ? "Listening... Speak now" : "Speak or tap below")}&quot;
-                    </p>
-
-                    {/* Quick Call Action Chips & Mic Toggle */}
-                    <div className="flex flex-wrap justify-center items-center gap-1.5 mt-2">
-                      <button
-                        type="button"
-                        onClick={() => handleSendMessage("What are your lawn mowing rates?")}
-                        className="text-[11px] font-medium px-2.5 py-1 bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200 rounded-full shadow-2xs transition-colors cursor-pointer"
-                      >
-                        Mowing Rates
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleSendMessage("How do I get a free quote?")}
-                        className="text-[11px] font-medium px-2.5 py-1 bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200 rounded-full shadow-2xs transition-colors cursor-pointer"
-                      >
-                        Free Quote
-                      </button>
                       <button
                         type="button"
                         onClick={handleToggleMute}
-                        className={`p-1 rounded-full border text-xs transition-colors cursor-pointer ${
-                          isMuted
-                            ? "bg-rose-50 border-rose-200 text-rose-600"
-                            : "bg-white border-neutral-200 text-neutral-600 hover:bg-neutral-100"
-                        }`}
+                        className="ml-1 p-0.5 rounded-full hover:bg-neutral-200 transition-colors cursor-pointer"
                         title={isMuted ? "Unmute microphone" : "Mute microphone"}
                       >
-                        {isMuted ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
+                        {isMuted ? (
+                          <MicOff className="w-3.5 h-3.5 text-rose-500" />
+                        ) : (
+                          <Mic className="w-3.5 h-3.5 text-neutral-600" />
+                        )}
                       </button>
                     </div>
+
+                    {/* Spoken Transcript Preview */}
+                    {voiceTranscript && (
+                      <p className="mt-2 text-xs text-neutral-600 line-clamp-2 px-2 italic min-h-[20px]">
+                        &quot;{voiceTranscript}&quot;
+                      </p>
+                    )}
                   </div>
                 ) : voiceState === "connecting" ? (
                   <p className="mt-6 text-center text-[13px] text-neutral-500 font-normal leading-relaxed max-w-[270px] mx-auto select-none animate-pulse">
                     Connecting with Greenly Voice Agent...
                   </p>
                 ) : (
-                  /* Idle Subtitle (Exact 2-line text from Screenshot 2) */
+                  /* Idle Subtitle (Exact text matching ElevenLabs conversational widget) */
                   <p className="mt-6 text-center text-[13px] text-neutral-500 font-normal leading-relaxed max-w-[270px] mx-auto select-none">
                     Discover the capabilities of Conversational<br />Agents powered by ElevenLabs
                   </p>
@@ -1017,135 +966,76 @@ export default function ChatbotWidget() {
               </div>
             </div>
           ) : (
-            /* ================= VIEW 2: TEXT CHAT THREAD VIEW ================= */
-            <div className="flex-1 flex flex-col h-full bg-[#fbfaf4]">
-              {/* Header */}
-              <div className="bg-white border-b border-neutral-200/80 px-4 py-3 flex items-center justify-between select-none">
-                <div className="flex items-center gap-2">
-                  {/* Switch to Voice View Pill */}
-                  <button
-                    type="button"
-                    onClick={() => setViewMode("voice")}
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-neutral-200 bg-white hover:bg-neutral-50 text-xs font-medium text-neutral-700 transition-colors shadow-2xs cursor-pointer"
-                    title="Switch to Voice Agent"
-                  >
-                    <VoiceOrb size="sm" className="!w-4 !h-4" />
-                    <span>Voice Agent</span>
-                  </button>
+            /* ================= VIEW 2: TEXT CHAT THREAD VIEW (Matches Screenshot 3) ================= */
+            <div className="flex-1 flex flex-col justify-between h-full bg-white overflow-hidden relative">
+              {/* Top Header: Orb with Back Chevron on Left, Minimize on Right */}
+              <div className="p-6 pb-2 flex items-center justify-between w-full select-none z-20">
+                {/* Top-left: Circular gradient orb with back arrow (< / ChevronLeft) to return to Voice view */}
+                <button
+                  type="button"
+                  onClick={() => setViewMode("voice")}
+                  title="Return to voice view"
+                  aria-label="Return to voice view"
+                  className="relative cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-95 focus:outline-none"
+                >
+                  <VoiceOrb size="sm" className="!w-9 !h-9 shadow-xs">
+                    <ChevronLeft className="w-4.5 h-4.5 text-white stroke-[2.5]" />
+                  </VoiceOrb>
+                </button>
 
-                  <div className="flex items-center gap-1.5 ml-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
-                    <span className="text-xs font-semibold text-neutral-800">
-                      Greenly AI
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={handleClearChat}
-                    title="Reset conversation"
-                    aria-label="Reset conversation"
-                    className="p-1.5 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors cursor-pointer"
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (voiceState === "connected") {
-                        handleEndVoice();
-                      }
-                      setIsOpen(false);
-                    }}
-                    title="Minimize chat"
-                    aria-label="Close chat"
-                    className="p-1.5 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors cursor-pointer"
-                  >
-                    <Minimize2 className="w-4 h-4" />
-                  </button>
-                </div>
+                {/* Top-right: Circular minimize button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (voiceState === "connected") {
+                      handleEndVoice();
+                    }
+                    setIsOpen(false);
+                  }}
+                  title="Minimize chat"
+                  aria-label="Minimize"
+                  className="w-9 h-9 rounded-full bg-neutral-100/90 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                >
+                  <Minimize2 className="w-4 h-4" />
+                </button>
               </div>
 
-              {/* Messages Body */}
+              {/* Message Thread */}
               <div
                 data-lenis-prevent
-                className="flex-1 overflow-y-auto p-4 space-y-3.5 bg-[#fbfaf4]"
+                className="flex-1 overflow-y-auto px-6 py-2 space-y-3 bg-white"
               >
                 {messages.map((message) => {
                   const isUser = message.role === "user";
                   return (
                     <div
                       key={message.id}
-                      className={`flex gap-2.5 ${isUser ? "justify-end" : "justify-start"}`}
+                      className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
                     >
-                      {!isUser && (
-                        <div className="w-7 h-7 rounded-full bg-[#274839] text-[#bedd25] flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
-                          <Sparkles className="w-3.5 h-3.5" />
-                        </div>
-                      )}
-
                       <div
-                        className={`max-w-[84%] sm:max-w-[80%] flex flex-col ${
-                          isUser ? "items-end" : "items-start"
-                        }`}
+                        className={
+                          isUser
+                            ? "bg-white border border-neutral-200/90 rounded-[20px] px-4 py-2.5 text-sm text-neutral-800 max-w-[85%] shadow-2xs break-words"
+                            : "bg-neutral-100 rounded-[20px] p-4 text-sm text-neutral-800 leading-relaxed max-w-[85%] break-words"
+                        }
                       >
-                        <div
-                          className={`px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-xs ${
-                            isUser
-                              ? "bg-[#274839] text-white rounded-tr-xs"
-                              : "bg-white text-[#1f1f1f] border border-neutral-200/70 rounded-tl-xs shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
-                          }`}
-                        >
-                          {isUser ? (
-                            <p className="whitespace-pre-wrap">{message.content}</p>
-                          ) : (
-                            <div>{formatMessageText(message.content)}</div>
-                          )}
-                        </div>
-
-                        <span className="text-[10px] text-neutral-400 mt-1 px-1">
-                          {message.timestamp}
-                        </span>
-
-                        {/* Suggestion Chips */}
-                        {!isUser && message.suggestions && message.suggestions.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mt-2 pt-0.5">
-                            {message.suggestions.map((suggestion, idx) => (
-                              <button
-                                key={idx}
-                                type="button"
-                                onClick={() => handleSendMessage(suggestion)}
-                                disabled={isLoading}
-                                className="text-[11px] font-medium px-2.5 py-1 bg-white hover:bg-[#bedd25]/20 text-[#274839] border border-[#274839]/20 hover:border-[#bedd25] rounded-full transition-all cursor-pointer shadow-2xs hover:scale-102 active:scale-98 disabled:opacity-50"
-                              >
-                                {suggestion}
-                              </button>
-                            ))}
-                          </div>
+                        {isUser ? (
+                          <p className="whitespace-pre-wrap">{message.content}</p>
+                        ) : (
+                          formatMessageText(message.content)
                         )}
                       </div>
-
-                      {isUser && (
-                        <div className="w-7 h-7 rounded-full bg-[#1b372a] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
-                          <User className="w-3.5 h-3.5" />
-                        </div>
-                      )}
                     </div>
                   );
                 })}
 
                 {/* Typing Indicator */}
                 {isLoading && (
-                  <div className="flex gap-2.5 justify-start items-center">
-                    <div className="w-7 h-7 rounded-full bg-[#274839] text-[#bedd25] flex items-center justify-center shrink-0">
-                      <Sparkles className="w-3.5 h-3.5" />
-                    </div>
-                    <div className="bg-white border border-neutral-200/70 px-4 py-2.5 rounded-2xl rounded-tl-xs flex items-center gap-1.5 shadow-xs">
-                      <span className="w-2 h-2 rounded-full bg-[#274839] animate-bounce [animation-delay:-0.3s]" />
-                      <span className="w-2 h-2 rounded-full bg-[#274839] animate-bounce [animation-delay:-0.15s]" />
-                      <span className="w-2 h-2 rounded-full bg-[#274839] animate-bounce" />
+                  <div className="flex justify-start w-full">
+                    <div className="bg-neutral-100 rounded-[20px] px-4 py-3 flex items-center gap-1.5 shadow-2xs">
+                      <span className="w-2 h-2 rounded-full bg-neutral-400 animate-bounce [animation-delay:-0.3s]" />
+                      <span className="w-2 h-2 rounded-full bg-neutral-400 animate-bounce [animation-delay:-0.15s]" />
+                      <span className="w-2 h-2 rounded-full bg-neutral-400 animate-bounce" />
                     </div>
                   </div>
                 )}
@@ -1153,57 +1043,35 @@ export default function ChatbotWidget() {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Chat Input Footer */}
-              <div className="p-3 bg-white border-t border-neutral-200/80">
+              {/* Bottom Bar: The exact same clean rounded-full pill input bar */}
+              <div className="p-6 pt-2 w-full">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
                     handleSendMessage();
                   }}
-                  className="flex items-center gap-2"
+                  className="w-full rounded-full border border-neutral-200/90 bg-white px-4 py-2.5 sm:py-3 flex items-center justify-between shadow-2xs hover:border-neutral-300 focus-within:border-neutral-400 focus-within:shadow-xs transition-all"
                 >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setViewMode("voice");
-                      if (voiceState === "idle") {
-                        handleStartVoice();
-                      }
-                    }}
-                    title="Switch to Voice Mode"
-                    className="p-2 text-neutral-500 hover:text-[#274839] hover:bg-neutral-100 rounded-full transition-colors cursor-pointer shrink-0"
-                    aria-label="Start voice mode"
-                  >
-                    <Phone className="w-4 h-4" />
-                  </button>
-
                   <input
                     ref={inputRef}
                     type="text"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Ask about lawn care, quotes, pricing..."
+                    placeholder="Or send a message..."
                     disabled={isLoading}
-                    className="flex-1 bg-[#fbfaf4] text-[#1f1f1f] text-xs sm:text-sm px-3.5 py-2.5 rounded-full border border-neutral-200 focus:outline-none focus:border-[#274839] focus:ring-1 focus:ring-[#274839] placeholder:text-neutral-400 disabled:opacity-60 transition-all"
+                    className="flex-1 bg-transparent text-sm text-neutral-800 placeholder:text-neutral-400 outline-none pr-2"
                   />
                   <button
                     type="submit"
                     disabled={isLoading || !inputValue.trim()}
                     title="Send message"
-                    className="bg-[#274839] hover:bg-[#1b372a] text-[#bedd25] p-2.5 rounded-full transition-all flex items-center justify-center shrink-0 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-xs hover:scale-105 active:scale-95"
                     aria-label="Send message"
+                    className="p-1.5 text-neutral-400 hover:text-neutral-800 disabled:opacity-40 transition-colors cursor-pointer shrink-0"
                   >
-                    <Send className="w-4 h-4" />
+                    <SolidPaperPlaneIcon className="w-4 h-4 fill-current" />
                   </button>
                 </form>
-                <div className="flex items-center justify-between mt-2 px-1 text-[10px] text-neutral-400">
-                  <span>Greenly Smart Customer Service</span>
-                  <span className="flex items-center gap-1 text-[9px] text-[#274839]/80 font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    Active
-                  </span>
-                </div>
               </div>
             </div>
           )}
