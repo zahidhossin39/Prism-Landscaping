@@ -81,3 +81,45 @@ body {
 .animate-chat-window {
   animation: chatSlideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+@keyframes voiceRipple {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.25;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.animate-voice-ripple {
+  animation: voiceRipple 2.2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+@keyframes soundWave {
+  0%, 100% {
+    height: 4px;
+  }
+  50% {
+    height: 16px;
+  }
+}
+
+.animate-sound-wave-1 {
+  animation: soundWave 0.8s ease-in-out infinite;
+}
+.animate-sound-wave-2 {
+  animation: soundWave 0.8s ease-in-out infinite 0.2s;
+}
+.animate-sound-wave-3 {
+  animation: soundWave 0.8s ease-in-out infinite 0.4s;
+}
+.animate-sound-wave-4 {
+  animation: soundWave 0.8s ease-in-out infinite 0.15s;
+}
+
