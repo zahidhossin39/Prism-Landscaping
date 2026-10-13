@@ -213,6 +213,73 @@ interface ISpeechRecognitionInstance extends EventTarget {
 
 type SpeechRecognitionConstructor = new () => ISpeechRecognitionInstance;
 
+const ELEVENLABS_AGENT_ID =
+  process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID || "agent_8401m4vbfz7tfmtsjv6ssmdesw6w";
+
+function downsampleAndConvertToInt16(
+  inputBuffer: Float32Array,
+  inputSampleRate: number,
+  outputSampleRate = 16000
+): Int16Array {
+  if (inputSampleRate === outputSampleRate) {
+    const output = new Int16Array(inputBuffer.length);
+    for (let i = 0; i < inputBuffer.length; i++) {
+      const s = Math.max(-1, Math.min(1, inputBuffer[i]));
+      output[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+    }
+    return output;
+  }
+
+  const sampleRatio = inputSampleRate / outputSampleRate;
+  const newLength = Math.round(inputBuffer.length / sampleRatio);
+  const result = new Int16Array(newLength);
+  let offsetResult = 0;
+  let offsetBuffer = 0;
+
+  while (offsetResult < result.length) {
+    const nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRatio);
+    let accum = 0;
+    let count = 0;
+    for (let i = offsetBuffer; i < nextOffsetBuffer && i < inputBuffer.length; i++) {
+      accum += inputBuffer[i];
+      count++;
+    }
+    const sample = count > 0 ? accum / count : 0;
+    const s = Math.max(-1, Math.min(1, sample));
+    result[offsetResult] = s < 0 ? s * 0x8000 : s * 0x7fff;
+    offsetResult++;
+    offsetBuffer = nextOffsetBuffer;
+  }
+
+  return result;
+}
+
+function base64FromInt16Array(int16Array: Int16Array): string {
+  const len = int16Array.length;
+  let binary = "";
+  for (let i = 0; i < len; i++) {
+    const val = int16Array[i];
+    const uval = val < 0 ? val + 0x10000 : val;
+    binary += String.fromCharCode(uval & 0xff, (uval >> 8) & 0xff);
+  }
+  return btoa(binary);
+}
+
+function int16ArrayFromBase64(base64: string): Int16Array {
+  const binary = atob(base64);
+  const sampleCount = Math.floor(binary.length / 2);
+  const samples = new Int16Array(sampleCount);
+  for (let i = 0; i < sampleCount; i++) {
+    const low = binary.charCodeAt(i * 2);
+    const high = binary.charCodeAt(i * 2 + 1);
+    let val = (high << 8) | low;
+    if (val >= 0x8000) val -= 0x10000;
+    samples[i] = val;
+  }
+  return samples;
+}
+
+
 /**
  * Reusable Voice Orb matching ElevenLabs conversational agent visual identity
  */
@@ -315,6 +382,18 @@ export default function ChatbotWidget() {
   const [isMuted, setIsMuted] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [voiceTranscript, setVoiceTranscript] = useState("");
+  const [isElevenLabsLive, setIsElevenLabsLive] = useState(false);
+
+  // ElevenLabs Live WebSocket and Web Audio Refs
+  const wsRef = useRef<WebSocket | null>(null);
+  const micContextRef = useRef<AudioContext | null>(null);
+  const playbackContextRef = useRef<AudioContext | null>(null);
+  const processorRef = useRef<ScriptProcessorNode | null>(null);
+  const micSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const activeSourcesRef = useRef<AudioBufferSourceNode[]>([]);
+  const nextPlayTimeRef = useRef<number>(0);
+
 
   const voiceStateRef = useRef<"idle" | "connecting" | "connected">("idle");
   const isMutedRef = useRef(false);
@@ -360,23 +439,164 @@ export default function ChatbotWidget() {
     };
   }, [voiceState]);
 
-  // Clean up speech synthesis & speech recognition on unmount
+  // Stop all active PCM audio playback
+  const stopAllAudioPlayback = useCallback(() => {
+    activeSourcesRef.current.forEach((src) => {
+      try {
+        src.stop();
+        src.disconnect();
+      } catch {
+        // Ignore stopped sources
+      }
+    });
+    activeSourcesRef.current = [];
+    if (playbackContextRef.current) {
+      nextPlayTimeRef.current = playbackContextRef.current.currentTime;
+    }
+    setIsSpeaking(false);
+  }, []);
+
+  // Queue and play incoming 16kHz PCM audio chunk from ElevenLabs
+  const playPcmChunk = useCallback((pcm16: Int16Array, sampleRate = 16000) => {
+    if (typeof window === "undefined") return;
+    try {
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (!playbackContextRef.current) {
+        playbackContextRef.current = new AudioContextClass();
+      }
+      const ctx = playbackContextRef.current;
+      if (ctx.state === "suspended") {
+        void ctx.resume();
+      }
+
+      const buffer = ctx.createBuffer(1, pcm16.length, sampleRate);
+      const channelData = buffer.getChannelData(0);
+      for (let i = 0; i < pcm16.length; i++) {
+        channelData[i] = pcm16[i] / 32768.0;
+      }
+
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(ctx.destination);
+
+      const currentTime = ctx.currentTime;
+      const startTime = Math.max(currentTime, nextPlayTimeRef.current);
+      source.start(startTime);
+      nextPlayTimeRef.current = startTime + buffer.duration;
+
+      activeSourcesRef.current.push(source);
+      setIsSpeaking(true);
+
+      source.onended = () => {
+        activeSourcesRef.current = activeSourcesRef.current.filter((s) => s !== source);
+        if (
+          activeSourcesRef.current.length === 0 &&
+          ctx.currentTime >= nextPlayTimeRef.current - 0.05
+        ) {
+          setIsSpeaking(false);
+        }
+      };
+    } catch (err) {
+      console.warn("PCM chunk playback error:", err);
+    }
+  }, []);
+
+  // Stop recognition helper
+  const stopListening = useCallback(() => {
+    if (recognitionRef.current) {
+      const rec = recognitionRef.current;
+      recognitionRef.current = null;
+      rec.onstart = null;
+      rec.onresult = null;
+      rec.onerror = null;
+      rec.onend = null;
+      try {
+        rec.abort();
+      } catch {
+        // Ignore abort errors
+      }
+    }
+    setIsListening(false);
+  }, []);
+
+  // Completely clean up ElevenLabs WebSocket, Web Audio, and Speech synthesis
+  const cleanupVoiceSession = useCallback(() => {
+    if (wsRef.current) {
+      try {
+        wsRef.current.onopen = null;
+        wsRef.current.onmessage = null;
+        wsRef.current.onerror = null;
+        wsRef.current.onclose = null;
+        wsRef.current.close();
+      } catch {
+        // Ignore close errors
+      }
+      wsRef.current = null;
+    }
+
+    if (processorRef.current) {
+      try {
+        processorRef.current.disconnect();
+      } catch {
+        // Ignore disconnect
+      }
+      processorRef.current = null;
+    }
+
+    if (micSourceRef.current) {
+      try {
+        micSourceRef.current.disconnect();
+      } catch {
+        // Ignore disconnect
+      }
+      micSourceRef.current = null;
+    }
+
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+      mediaStreamRef.current = null;
+    }
+
+    if (micContextRef.current) {
+      try {
+        void micContextRef.current.close();
+      } catch {
+        // Ignore close
+      }
+      micContextRef.current = null;
+    }
+
+    stopAllAudioPlayback();
+
+    if (playbackContextRef.current) {
+      try {
+        void playbackContextRef.current.close();
+      } catch {
+        // Ignore close
+      }
+      playbackContextRef.current = null;
+    }
+
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    stopListening();
+  }, [stopAllAudioPlayback, stopListening]);
+
+  // Clean up on unmount
   useEffect(() => {
     return () => {
+      cleanupVoiceSession();
       if (connectTimeoutRef.current) {
         clearTimeout(connectTimeoutRef.current);
       }
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
-      if (recognitionRef.current) {
-        recognitionRef.current.abort();
-      }
     };
-  }, []);
+  }, [cleanupVoiceSession]);
 
   // Auto focus input when chat opens or mode changes
   useEffect(() => {
@@ -407,23 +627,6 @@ export default function ChatbotWidget() {
     };
   }, [isLangDropdownOpen]);
 
-  // Stop recognition helper
-  const stopListening = useCallback(() => {
-    if (recognitionRef.current) {
-      const rec = recognitionRef.current;
-      recognitionRef.current = null;
-      rec.onstart = null;
-      rec.onresult = null;
-      rec.onerror = null;
-      rec.onend = null;
-      try {
-        rec.abort();
-      } catch {
-        // Ignore abort errors
-      }
-    }
-    setIsListening(false);
-  }, []);
 
   // Forward declaration for handleSendMessage
   const handleSendMessageRef = useRef<(textToSend?: string) => Promise<void>>(async () => {});
@@ -586,6 +789,18 @@ export default function ChatbotWidget() {
         setViewMode("chat");
       }
 
+      // If ElevenLabs live voice WebSocket is active, send user message to ElevenLabs directly
+      if (isElevenLabsLive && wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        setIsLoading(false);
+        setVoiceTranscript(`You: ${text}`);
+        try {
+          wsRef.current.send(JSON.stringify({ type: "user_message", text }));
+        } catch (wsErr) {
+          console.warn("Failed to send user message to ElevenLabs WebSocket:", wsErr);
+        }
+        return;
+      }
+
       try {
         const response = await fetch("/api/chat", {
           method: "POST",
@@ -639,31 +854,221 @@ export default function ChatbotWidget() {
         setIsLoading(false);
       }
     },
-    [inputValue, isLoading, messages, viewMode, speakText]
+    [inputValue, isLoading, messages, viewMode, speakText, isElevenLabsLive]
   );
 
   useEffect(() => {
     handleSendMessageRef.current = handleSendMessage;
   }, [handleSendMessage]);
 
-  // Start voice agent session
+  // Fallback voice simulation using browser Web Speech API & /api/chat
+  const startFallbackVoiceSimulation = useCallback(() => {
+    setCallDuration(0);
+    voiceStateRef.current = "connected";
+    setVoiceState("connected");
+    setIsElevenLabsLive(false);
+    const welcomeSpeech =
+      "Hello! Thanks for calling Greenly Landscaping. How can I help you with your lawn or garden today?";
+    setVoiceTranscript(welcomeSpeech);
+    speakText(welcomeSpeech);
+  }, [speakText]);
+
+  // Start voice agent session (connects to ElevenLabs Conversational AI WebSocket with fallback)
   const handleStartVoice = () => {
     if (connectTimeoutRef.current) {
       clearTimeout(connectTimeoutRef.current);
     }
+    cleanupVoiceSession();
     setCallDuration(0);
     voiceStateRef.current = "connecting";
     setVoiceState("connecting");
-    const welcomeSpeech =
-      "Hello. Welcome to Greenly Landscaping. I can answer questions about lawn mowing, tree trimming, irrigation, and free estimates. How can I help you today?";
-    setVoiceTranscript(welcomeSpeech);
+    setVoiceTranscript("Connecting with ElevenLabs Voice Agent...");
 
-    connectTimeoutRef.current = setTimeout(() => {
-      connectTimeoutRef.current = null;
-      voiceStateRef.current = "connected";
-      setVoiceState("connected");
-      speakText(welcomeSpeech);
-    }, 500);
+    if (typeof window === "undefined" || !("WebSocket" in window)) {
+      startFallbackVoiceSimulation();
+      return;
+    }
+
+    // Initialize or resume AudioContext directly inside user click gesture to satisfy browser autoplay policy
+    const AudioContextClass =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (AudioContextClass) {
+      if (!playbackContextRef.current) {
+        playbackContextRef.current = new AudioContextClass();
+      }
+      if (playbackContextRef.current.state === "suspended") {
+        void playbackContextRef.current.resume();
+      }
+      nextPlayTimeRef.current = playbackContextRef.current.currentTime;
+    }
+
+    let hasReceivedAudioOrEvent = false;
+
+    try {
+      const wsUrl = `wss://api.elevenlabs.io/v1/convai/conversation?agent_id=${ELEVENLABS_AGENT_ID}`;
+      const ws = new WebSocket(wsUrl);
+      wsRef.current = ws;
+
+      // Fail-safe connection timeout (8s for WebSocket handshake + initial event before fallback)
+      connectTimeoutRef.current = setTimeout(() => {
+        if (!hasReceivedAudioOrEvent && voiceStateRef.current === "connecting") {
+          console.warn("ElevenLabs connection timed out, switching to voice simulation fallback");
+          cleanupVoiceSession();
+          startFallbackVoiceSimulation();
+        }
+      }, 8000);
+
+      ws.onopen = async () => {
+        setIsElevenLabsLive(true);
+        setVoiceState("connected");
+        voiceStateRef.current = "connected";
+        setVoiceTranscript("Connected to Greenly Voice Agent. Listening...");
+
+        try {
+          ws.send(
+            JSON.stringify({
+              type: "conversation_initiation_client_data",
+              conversation_config_override: {},
+            })
+          );
+        } catch {
+          // ignore
+        }
+
+        // Initialize microphone audio stream
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              sampleRate: 16000,
+              channelCount: 1,
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true,
+            },
+          });
+          mediaStreamRef.current = stream;
+
+          const micCtx = new AudioContextClass();
+          micContextRef.current = micCtx;
+
+          const micSource = micCtx.createMediaStreamSource(stream);
+          micSourceRef.current = micSource;
+
+          const processor = micCtx.createScriptProcessor(4096, 1, 1);
+          processorRef.current = processor;
+
+          // Connect through a zero-gain node so user mic doesn't play back through local speakers (prevents feedback/echo)
+          const muteNode = micCtx.createGain();
+          muteNode.gain.value = 0;
+
+          processor.onaudioprocess = (e) => {
+            // Guarantee output buffer is silent to avoid acoustic feedback screech
+            const outputData = e.outputBuffer.getChannelData(0);
+            outputData.fill(0);
+
+            if (
+              isMutedRef.current ||
+              !wsRef.current ||
+              wsRef.current.readyState !== WebSocket.OPEN
+            ) {
+              return;
+            }
+            const inputData = e.inputBuffer.getChannelData(0);
+            const pcm16 = downsampleAndConvertToInt16(inputData, micCtx.sampleRate, 16000);
+            const base64Audio = base64FromInt16Array(pcm16);
+            try {
+              wsRef.current.send(JSON.stringify({ user_audio_chunk: base64Audio }));
+            } catch {
+              // ignore
+            }
+          };
+
+          micSource.connect(processor);
+          processor.connect(muteNode);
+          muteNode.connect(micCtx.destination);
+          setIsListening(true);
+        } catch (micErr) {
+          console.warn("Microphone access failed or denied:", micErr);
+          setVoiceTranscript("Microphone permission denied. Speak simulated or type below.");
+        }
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          hasReceivedAudioOrEvent = true;
+
+          if (data.type === "conversation_initiation_metadata") {
+            const welcomeMsg =
+              "Hello! Thanks for calling Greenly Landscaping. How can I help you with your lawn or garden today?";
+            setVoiceTranscript(welcomeMsg);
+          } else if (data.type === "audio" && data.audio_event?.audio_base_64) {
+            const pcm16 = int16ArrayFromBase64(data.audio_event.audio_base_64);
+            playPcmChunk(pcm16, 16000);
+          } else if (data.type === "agent_response" && data.agent_response_event?.agent_response) {
+            const agentReply = data.agent_response_event.agent_response;
+            setVoiceTranscript(agentReply);
+            const timeStr = getCurrentTime();
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: createMessageId("eleven-agent"),
+                role: "assistant",
+                content: agentReply,
+                timestamp: timeStr,
+              },
+            ]);
+          } else if (
+            data.type === "agent_response_correction" &&
+            data.agent_response_correction_event?.agent_response
+          ) {
+            const correctedReply = data.agent_response_correction_event.agent_response;
+            setVoiceTranscript(correctedReply);
+          } else if (data.type === "user_transcript" && data.user_transcription_event?.user_transcript) {
+            const userText = data.user_transcription_event.user_transcript;
+            setVoiceTranscript(`You: ${userText}`);
+            const timeStr = getCurrentTime();
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: createMessageId("eleven-user"),
+                role: "user",
+                content: userText,
+                timestamp: timeStr,
+              },
+            ]);
+          } else if (data.type === "interruption") {
+            stopAllAudioPlayback();
+          } else if (data.type === "ping" && data.ping_event?.event_id) {
+            try {
+              ws.send(JSON.stringify({ type: "pong", event_id: data.ping_event.event_id }));
+            } catch {
+              // ignore
+            }
+          }
+        } catch (err) {
+          console.warn("ElevenLabs message parse error:", err);
+        }
+      };
+
+      ws.onerror = (err) => {
+        console.warn("ElevenLabs WebSocket error:", err);
+        if (!hasReceivedAudioOrEvent && voiceStateRef.current === "connecting") {
+          cleanupVoiceSession();
+          startFallbackVoiceSimulation();
+        }
+      };
+
+      ws.onclose = () => {
+        if (voiceStateRef.current === "connected") {
+          handleEndVoice();
+        }
+      };
+    } catch (err) {
+      console.warn("Failed to create ElevenLabs WebSocket:", err);
+      startFallbackVoiceSimulation();
+    }
   };
 
   // End voice agent session
@@ -672,12 +1077,10 @@ export default function ChatbotWidget() {
       clearTimeout(connectTimeoutRef.current);
       connectTimeoutRef.current = null;
     }
+    cleanupVoiceSession();
     voiceStateRef.current = "idle";
     setVoiceState("idle");
-    stopListening();
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-    }
+    setIsElevenLabsLive(false);
     setCallDuration(0);
     setIsSpeaking(false);
     setIsListening(false);
@@ -689,12 +1092,16 @@ export default function ChatbotWidget() {
     if (isMutedRef.current) {
       isMutedRef.current = false;
       setIsMuted(false);
-      if (!isSpeaking) {
+      setIsListening(true);
+      if (!isElevenLabsLive && !isSpeaking) {
         startListening();
       }
+      setVoiceTranscript("");
     } else {
       isMutedRef.current = true;
       setIsMuted(true);
+      setIsListening(false);
+      stopAllAudioPlayback();
       stopListening();
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
@@ -703,6 +1110,7 @@ export default function ChatbotWidget() {
       setVoiceTranscript("(Microphone muted)");
     }
   };
+
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -950,7 +1358,13 @@ export default function ChatbotWidget() {
                         } animate-pulse`}
                       />
                       <span>
-                        {isListening ? "Listening..." : isSpeaking ? "Speaking..." : "Connected"} •{" "}
+                        {isListening
+                          ? "Listening..."
+                          : isSpeaking
+                          ? "Speaking..."
+                          : isElevenLabsLive
+                          ? "ElevenLabs Live"
+                          : "Connected"} •{" "}
                         {formatDuration(callDuration)}
                       </span>
                       <button
@@ -976,7 +1390,7 @@ export default function ChatbotWidget() {
                   </div>
                 ) : voiceState === "connecting" ? (
                   <p className="mt-6 text-center text-[13px] text-neutral-500 font-normal leading-relaxed max-w-[270px] mx-auto select-none animate-pulse">
-                    Connecting with Greenly Voice Agent...
+                    Connecting with ElevenLabs Voice Agent...
                   </p>
                 ) : (
                   /* Idle Subtitle (Exact text matching ElevenLabs conversational widget) */
