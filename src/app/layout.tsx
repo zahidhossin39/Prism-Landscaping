@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
+import "lenis/dist/lenis.css";
 import "./globals.css";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import SmoothScroll from "@/components/SmoothScroll";

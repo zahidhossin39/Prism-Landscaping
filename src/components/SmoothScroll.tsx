@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { ReactLenis, useLenis } from "lenis/react";
 import { usePathname } from "next/navigation";
 import type { LenisRef } from "lenis/react";
@@ -9,12 +9,33 @@ interface SmoothScrollProps {
   children: React.ReactNode;
 }
 
+/**
+ * Safely resolves target DOM elements for hashes without crashing on invalid CSS selectors
+ */
+function getTargetElement(hash: string): HTMLElement | null {
+  if (!hash || hash === "#" || hash === "#top") return null;
+  const rawId = hash.startsWith("#") ? hash.slice(1) : hash;
+  try {
+    const decodedId = decodeURIComponent(rawId);
+    const byId = document.getElementById(decodedId);
+    if (byId) return byId;
+  } catch {
+    // ignore decodeURIComponent error
+  }
+  try {
+    const byQuery = document.querySelector(hash);
+    if (byQuery instanceof HTMLElement) return byQuery;
+  } catch {
+    // ignore syntax errors on non-standard selectors (e.g. '#/path' or '#123')
+  }
+  return null;
+}
+
 function SmoothScrollHandler() {
   const lenis = useLenis();
   const pathname = usePathname();
-  const initialHashHandled = useRef(false);
 
-  // Expose lenis instance globally for programmatic control & debugging
+  // Expose lenis instance globally for programmatic control & testing
   useEffect(() => {
     if (!lenis) return;
     (window as unknown as { __lenis?: typeof lenis }).__lenis = lenis;
@@ -24,16 +45,18 @@ function SmoothScrollHandler() {
     };
   }, [lenis]);
 
-  // Handle body overflow locking (e.g. modals, drawers, lightbox)
+  // Handle body & html overflow locking (e.g. modals, drawers, lightbox)
   useEffect(() => {
     if (!lenis) return;
 
     const checkOverflow = () => {
-      const isBodyLocked =
+      const isLocked =
         document.body.style.overflow === "hidden" ||
+        document.documentElement.style.overflow === "hidden" ||
+        document.body.classList.contains("overflow-hidden") ||
         document.documentElement.classList.contains("overflow-hidden");
 
-      if (isBodyLocked) {
+      if (isLocked) {
         lenis.stop();
       } else {
         lenis.start();
@@ -47,13 +70,45 @@ function SmoothScrollHandler() {
       attributes: true,
       attributeFilter: ["style", "class"],
     });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["style", "class"],
+    });
 
     return () => {
       observer.disconnect();
     };
   }, [lenis]);
 
-  // Handle smooth scrolling for anchor links clicked on the page
+  // Smoothly scroll to a hash with retry polling for client-rendered DOM nodes
+  const scrollToHash = useCallback(
+    (hash: string, immediate = false) => {
+      if (!lenis) return;
+      if (!hash || hash === "#") return;
+      if (hash === "#top") {
+        lenis.scrollTo(0, { immediate, duration: 1.2 });
+        return;
+      }
+
+      let attempts = 0;
+      const maxAttempts = 10;
+      const checkAndScroll = () => {
+        const target = getTargetElement(hash);
+        if (target) {
+          // Note: CSS html { scroll-padding-top: 5.5rem } already handles the 88px header offset
+          lenis.scrollTo(target, { immediate, duration: 1.2 });
+        } else if (attempts < maxAttempts) {
+          attempts++;
+          setTimeout(checkAndScroll, 80);
+        }
+      };
+
+      checkAndScroll();
+    },
+    [lenis]
+  );
+
+  // Handle smooth scrolling for internal anchor clicks
   useEffect(() => {
     if (!lenis) return;
 
@@ -96,13 +151,20 @@ function SmoothScrollHandler() {
       }
 
       if (targetHash) {
-        const targetElement = document.querySelector(targetHash);
+        if (targetHash === "#top") {
+          e.preventDefault();
+          lenis.scrollTo(0, { duration: 1.2 });
+          if (window.location.hash !== "") {
+            window.history.pushState(null, "", window.location.pathname);
+          }
+          return;
+        }
+
+        const targetElement = getTargetElement(targetHash);
         if (targetElement) {
           e.preventDefault();
-          lenis.scrollTo(targetElement as HTMLElement, {
-            offset: -88,
-            duration: 1.2,
-          });
+          // CSS scroll-padding-top: 5.5rem handles sticky header offset automatically
+          lenis.scrollTo(targetElement, { duration: 1.2 });
           if (window.location.hash !== targetHash) {
             window.history.pushState(null, "", targetHash);
           }
@@ -116,34 +178,32 @@ function SmoothScrollHandler() {
     };
   }, [lenis]);
 
-  // Handle initial page load with hash, or client navigation with hash
+  // Handle hash changes via browser history (Back / Forward buttons)
+  useEffect(() => {
+    if (!lenis) return;
+
+    const handleHashChange = () => {
+      if (window.location.hash) {
+        scrollToHash(window.location.hash, false);
+      }
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, [lenis, scrollToHash]);
+
+  // Handle route change and initial page mount
   useEffect(() => {
     if (!lenis) return;
 
     if (window.location.hash) {
-      const hash = window.location.hash;
-      const timer = setTimeout(() => {
-        const targetElement = document.querySelector(hash);
-        if (targetElement) {
-          lenis.scrollTo(targetElement as HTMLElement, {
-            offset: -88,
-            duration: 1.2,
-            immediate: false,
-          });
-        }
-      }, initialHashHandled.current ? 80 : 250);
-      initialHashHandled.current = true;
-      return () => clearTimeout(timer);
-    }
-  }, [lenis, pathname]);
-
-  // On page change without hash, scroll to top cleanly
-  useEffect(() => {
-    if (!lenis) return;
-    if (!window.location.hash) {
+      scrollToHash(window.location.hash, false);
+    } else {
       lenis.scrollTo(0, { immediate: true });
     }
-  }, [pathname, lenis]);
+  }, [pathname, lenis, scrollToHash]);
 
   return null;
 }
@@ -156,11 +216,10 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
       ref={lenisRef}
       root
       options={{
-        lerp: 0.09, // Silky momentum interpolation matching Framer standard
-        duration: 1.2,
+        lerp: 0.08, // Silky Framer-standard momentum physics (duration omitted so lerp is active)
         smoothWheel: true,
-        wheelMultiplier: 1.05, // Crisp, responsive boost
-        touchMultiplier: 1.5,
+        wheelMultiplier: 1.15, // Responsive momentum boost
+        touchMultiplier: 1.0,
         infinite: false,
         autoResize: true,
         autoRaf: true,
@@ -168,6 +227,13 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
         allowNestedScroll: true,
         stopInertiaOnNavigate: true,
         respectReducedMotion: true,
+        virtualScroll: ({ event }) => {
+          // Keep touch interactions 100% native on mobile devices
+          if (event.type.includes("touch")) {
+            return false;
+          }
+          return true;
+        },
         prevent: (node) => {
           return (
             node.hasAttribute("data-lenis-prevent") ||
