@@ -23,10 +23,10 @@ interface Message {
 }
 
 const DEFAULT_SUGGESTIONS = [
+  "Get A Free Quote",
   "Explore Services",
-  "Get a Quote",
   "Pricing & Estimates",
-  "Emergency Lawn Care",
+  "Emergency Hotline",
 ];
 
 const INITIAL_MESSAGES: Message[] = [
@@ -34,7 +34,7 @@ const INITIAL_MESSAGES: Message[] = [
     id: "welcome-1",
     role: "assistant",
     content:
-      "Hello! Welcome to **Greenly Landscaping**. 🌿\n\nI'm your virtual customer service assistant. Ask me about our lawn mowing, shrub care, seasonal cleanups, pricing estimates, or how to get a free on-site quote!",
+      "Hello. Welcome to **Greenly Landscaping**.\n\nI can answer questions about lawn mowing, shrub trimming, seasonal cleanups, irrigation, soil testing, pricing, blog guides, gallery projects, or setting up a free quote.",
     timestamp: "Just now",
     suggestions: DEFAULT_SUGGESTIONS,
   },
@@ -129,7 +129,7 @@ export default function ChatbotWidget() {
         role: "assistant",
         content:
           data.reply ||
-          "Thank you for contacting Greenly! We will get right on that. You can also call us at +1 (000) 123-4567.",
+          "For direct assistance or pricing estimates, call +1 (000) 123-4567 or email info@gardencare.com.",
         timestamp: getCurrentTime(),
         suggestions: data.suggestions && data.suggestions.length > 0 ? data.suggestions : undefined,
       };
@@ -141,7 +141,7 @@ export default function ChatbotWidget() {
         id: createMessageId("bot-err"),
         role: "assistant",
         content:
-          "Sorry, I had trouble reaching our service. Please feel free to call our main office directly at **+1 (000) 123-4567** or email **info@gardencare.com**.",
+          "I am having trouble connecting to the service. You can call our office directly at **+1 (000) 123-4567** or email **info@gardencare.com**.",
         timestamp: getCurrentTime(),
         suggestions: ["Contact Information", "Explore Services"],
       };
@@ -164,17 +164,17 @@ export default function ChatbotWidget() {
         id: createMessageId("welcome"),
         role: "assistant",
         content:
-          "Hello! Welcome to **Greenly Landscaping**. 🌿\n\nI'm your virtual customer service assistant. Ask me about our lawn mowing, shrub care, seasonal cleanups, pricing estimates, or how to get a free on-site quote!",
+          "Hello. Welcome to **Greenly Landscaping**.\n\nI can answer questions about lawn mowing, shrub trimming, seasonal cleanups, irrigation, soil testing, pricing, blog guides, gallery projects, or setting up a free quote.",
         timestamp: getCurrentTime(),
         suggestions: DEFAULT_SUGGESTIONS,
       },
     ]);
   };
 
-  // Helper to format markdown bold, links, emails, and phone numbers safely
+  // Helper to format markdown bold, links, emails, phone numbers, and internal paths safely
   const renderInlineFormatted = (rawText: string) => {
-    // Regex tokens: [label](url) OR **bold** OR email OR phone number
-    const regex = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|\+1\s*\(\d{3}\)\s*\d{3}-\d{4})/g;
+    // Regex tokens: [label](url) OR **bold** OR internal paths (/gallery, /blog, etc.) OR email OR phone number
+    const regex = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|\/(?:gallery|blog|service|about|contact-us|testimonials|privacy)(?:\/[a-z0-9-]+)?|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|\+1\s*\(\d{3}\)\s*\d{3}-\d{4})/g;
     const parts = rawText.split(regex);
 
     return parts.map((part, idx) => {
@@ -202,6 +202,19 @@ export default function ChatbotWidget() {
           <strong key={idx} className="font-semibold text-[#1b372a]">
             {part.slice(2, -2)}
           </strong>
+        );
+      }
+
+      // Internal site routes (/gallery, /blog, etc.)
+      if (/^\/(?:gallery|blog|service|about|contact-us|testimonials|privacy)(?:\/[a-z0-9-]+)?$/.test(part)) {
+        return (
+          <a
+            key={idx}
+            href={part}
+            className="text-[#274839] font-semibold underline decoration-[#bedd25] hover:text-[#1b372a]"
+          >
+            {part}
+          </a>
         );
       }
 
@@ -244,9 +257,9 @@ export default function ChatbotWidget() {
         return <div key={lineIdx} className="h-2" />;
       }
 
-      // Bullet points
-      const isBullet = line.trim().startsWith("•") || line.trim().startsWith("-");
-      const cleanLine = isBullet ? line.replace(/^[•-]\s*/, "") : line;
+      // Bullet points (supports •, -, and *)
+      const isBullet = /^[•\-\*]\s*/.test(line.trim());
+      const cleanLine = isBullet ? line.trim().replace(/^[•\-\*]\s*/, "") : line;
 
       if (isBullet) {
         return (
