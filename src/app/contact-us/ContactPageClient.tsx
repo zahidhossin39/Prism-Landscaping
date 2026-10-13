@@ -80,7 +80,7 @@ export default function ContactPageClient() {
                     Phone:
                   </span>
                   <a
-                    href="tel:+1 (000) 123-4567"
+                    href="tel:+10001234567"
                     className="text-base font-normal text-[#1f1f1f] hover:text-[#bedd25] transition-colors inline-block"
                   >
                     +1 (000) 123-4567

@@ -21,13 +21,7 @@ export default function NotFoundClient() {
   };
 
   return (
-    <>
-      <title>404 - Page Not Found - Greenly</title>
-      <meta
-        name="description"
-        content="It seems the page you're looking for has been moved, removed, or doesn't exist. Don't worry—our garden is still growing."
-      />
-      <main className="min-h-screen bg-[#f2f1e7] text-[#1f1f1f] flex flex-col justify-between relative selection:bg-[#bedd25] selection:text-[#1f1f1f]">
+    <main className="min-h-screen bg-[#f2f1e7] text-[#1f1f1f] flex flex-col justify-between relative selection:bg-[#bedd25] selection:text-[#1f1f1f]">
         {/* Top Floating / Sticky Navbar */}
         <Navbar onOpenQuote={handleOpenQuote} />
 
@@ -90,6 +84,5 @@ export default function NotFoundClient() {
           defaultService={selectedService}
         />
       </main>
-    </>
   );
 }
