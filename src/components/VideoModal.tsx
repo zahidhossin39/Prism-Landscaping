@@ -31,10 +31,12 @@ export default function VideoModal({ isOpen, onClose, videoSrc, title }: VideoMo
 
   return (
     <div
+      data-lenis-prevent
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 sm:p-6 transition-opacity animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
+        data-lenis-prevent
         className="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
         onClick={(e) => e.stopPropagation()}
       >

@@ -372,6 +372,7 @@ export default function GalleryPageClient() {
           role="dialog"
           aria-modal="true"
           aria-label="Image gallery lightbox"
+          data-lenis-prevent
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 sm:p-6 animate-in fade-in duration-200 select-none"
           onClick={closeLightbox}
           onTouchStart={handleTouchStart}

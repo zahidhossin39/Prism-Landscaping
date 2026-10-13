@@ -335,6 +335,7 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
           id="mobile-menu"
           role="region"
           aria-label="Mobile Navigation"
+          data-lenis-prevent
           className="md:hidden mt-2 mx-auto max-w-[1204px] max-h-[calc(100vh-100px)] overflow-y-auto bg-[#ffffff] rounded-[10px] shadow-xl border border-[#e5e3d7] p-5 space-y-4 animate-in fade-in slide-in-from-top-3 duration-200"
         >
           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm font-medium text-[#1f1f1f]">

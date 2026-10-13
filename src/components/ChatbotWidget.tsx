@@ -272,6 +272,7 @@ export default function ChatbotWidget() {
         <div
           role="dialog"
           aria-label="Greenly AI Customer Support Chat"
+          data-lenis-prevent
           className="mb-4 w-[calc(100vw-2.5rem)] max-w-[410px] sm:w-[390px] md:w-[410px] h-[540px] max-h-[82vh] bg-[#fbfaf4] rounded-2xl shadow-2xl border border-[#274839]/20 flex flex-col overflow-hidden animate-chat-window"
         >
           {/* Header */}
@@ -346,7 +347,10 @@ export default function ChatbotWidget() {
           </div>
 
           {/* Messages Body */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#fbfaf4]">
+          <div
+            data-lenis-prevent
+            className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#fbfaf4]"
+          >
             {messages.map((message) => {
               const isUser = message.role === "user";
               return (

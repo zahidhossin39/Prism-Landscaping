@@ -77,10 +77,12 @@ export default function QuoteModal({ isOpen, onClose, defaultService = "Lawn Mow
 
   return (
     <div
+      data-lenis-prevent
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 sm:p-6 transition-all duration-300"
       onClick={handleClose}
     >
       <div
+        data-lenis-prevent
         className="relative w-full max-w-lg bg-[#ffffff] rounded-2xl overflow-hidden shadow-2xl border border-[#e2dec9] text-[#1f1f1f] p-6 sm:p-8 animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
