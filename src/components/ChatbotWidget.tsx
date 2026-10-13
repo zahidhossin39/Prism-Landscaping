@@ -139,10 +139,13 @@ function FlagIcon({ code }: { code: string }) {
 /**
  * Solid telephone receiver handset silhouette matching center of Screenshot 2
  */
-function PhoneHandsetIcon({ className = "w-5 h-5 fill-neutral-900" }: { className?: string }) {
+function PhoneHandsetIcon({ className = "w-5 h-5 text-neutral-900" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
-      <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+      <path
+        fill="currentColor"
+        d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
+      />
     </svg>
   );
 }
@@ -150,10 +153,13 @@ function PhoneHandsetIcon({ className = "w-5 h-5 fill-neutral-900" }: { classNam
 /**
  * Solid paper airplane silhouette matching send button in Screenshots 2 and 3
  */
-function SolidPaperPlaneIcon({ className = "w-4 h-4 fill-neutral-400" }: { className?: string }) {
+function SolidPaperPlaneIcon({ className = "w-4 h-4 text-neutral-400" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
-      <polygon points="21.5 2.5 14.5 21.5 10.5 13.5 2.5 9.5 21.5 2.5" />
+      <polygon
+        fill="currentColor"
+        points="21.5 2.5 14.5 21.5 10.5 13.5 2.5 9.5 21.5 2.5"
+      />
     </svg>
   );
 }
@@ -217,25 +223,30 @@ function VoiceOrb({
   className = "",
   children,
 }: {
-  size?: "sm" | "lg";
+  size?: "sm" | "md" | "lg";
   isActive?: boolean;
   isSpeaking?: boolean;
   className?: string;
   children?: React.ReactNode;
 }) {
   const isSm = size === "sm";
-  const filterId = useId();
+  const isMd = size === "md";
+  const isCompact = isSm || isMd;
+  const rawId = useId();
+  const filterId = "voice-orb-" + rawId.replace(/[^a-zA-Z0-9_-]/g, "");
+
+  const sizeClasses = isSm
+    ? "w-8 h-8 shadow-xs"
+    : isMd
+    ? "w-9 h-9 shadow-xs"
+    : "w-44 h-44 sm:w-48 sm:h-48 shadow-[0_14px_45px_rgba(2,132,199,0.25)]";
 
   return (
     <div
-      className={`relative rounded-full select-none flex items-center justify-center shrink-0 ${
-        isSm
-          ? "w-8.5 h-8.5 shadow-xs"
-          : "w-44 h-44 sm:w-46 sm:h-46 shadow-[0_14px_45px_rgba(2,132,199,0.25)]"
-      } ${className}`}
+      className={`relative rounded-full select-none flex items-center justify-center shrink-0 ${sizeClasses} ${className}`}
     >
       {/* Dynamic sound ripple waves when active call */}
-      {isActive && !isSm && (
+      {isActive && !isCompact && (
         <>
           <div className="absolute -inset-4 rounded-full border-2 border-sky-400/40 animate-voice-ripple pointer-events-none" />
           <div className="absolute -inset-2 rounded-full border border-teal-300/50 animate-pulse pointer-events-none" />
@@ -304,6 +315,17 @@ export default function ChatbotWidget() {
   const [isMuted, setIsMuted] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [voiceTranscript, setVoiceTranscript] = useState("");
+
+  const voiceStateRef = useRef<"idle" | "connecting" | "connected">("idle");
+  const isMutedRef = useRef(false);
+
+  useEffect(() => {
+    voiceStateRef.current = voiceState;
+  }, [voiceState]);
+
+  useEffect(() => {
+    isMutedRef.current = isMuted;
+  }, [isMuted]);
 
   // Language selector state
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageOption>(LANGUAGES[0]);
@@ -396,7 +418,7 @@ export default function ChatbotWidget() {
 
   // Start Speech Recognition listener
   const startListening = useCallback(() => {
-    if (typeof window === "undefined" || voiceState !== "connected" || isMuted) return;
+    if (typeof window === "undefined" || voiceStateRef.current !== "connected" || isMutedRef.current) return;
 
     const SpeechRec =
       (window as unknown as { SpeechRecognition?: SpeechRecognitionConstructor }).SpeechRecognition ||
@@ -463,7 +485,7 @@ export default function ChatbotWidget() {
       console.warn("Speech recognition start failed:", err);
       setIsListening(false);
     }
-  }, [voiceState, isMuted, selectedLanguage.code, stopListening]);
+  }, [selectedLanguage.code, stopListening]);
 
   // Speak text helper using SpeechSynthesis
   const speakText = useCallback(
@@ -500,14 +522,14 @@ export default function ChatbotWidget() {
         utterance.onend = () => {
           setIsSpeaking(false);
           // When bot finishes speaking, automatically listen for user's response
-          if (!isMuted && voiceState === "connected") {
+          if (!isMutedRef.current && voiceStateRef.current === "connected") {
             startListening();
           }
         };
 
         utterance.onerror = () => {
           setIsSpeaking(false);
-          if (!isMuted && voiceState === "connected") {
+          if (!isMutedRef.current && voiceStateRef.current === "connected") {
             startListening();
           }
         };
@@ -516,12 +538,12 @@ export default function ChatbotWidget() {
       } catch (err) {
         console.warn("Speech synthesis error:", err);
         setIsSpeaking(false);
-        if (!isMuted && voiceState === "connected") {
+        if (!isMutedRef.current && voiceStateRef.current === "connected") {
           startListening();
         }
       }
     },
-    [selectedLanguage.code, isMuted, voiceState, startListening, stopListening]
+    [selectedLanguage.code, startListening, stopListening]
   );
 
   // Send message to /api/chat
@@ -543,8 +565,8 @@ export default function ChatbotWidget() {
       setInputValue("");
       setIsLoading(true);
 
-      // If in voice view, switch to chat if user typed directly
-      if (viewMode === "voice" && voiceState === "idle") {
+      // If in voice view and user typed manually, switch to chat to display conversation thread
+      if (viewMode === "voice" && !textToSend) {
         setViewMode("chat");
       }
 
@@ -578,7 +600,7 @@ export default function ChatbotWidget() {
         setMessages((prev) => [...prev, botMessage]);
 
         // If in voice call, speak response and update transcript
-        if (voiceState === "connected") {
+        if (voiceStateRef.current === "connected") {
           setVoiceTranscript(botMessage.content);
           speakText(botMessage.content);
         }
@@ -593,7 +615,7 @@ export default function ChatbotWidget() {
         };
         setMessages((prev) => [...prev, errorMessage]);
 
-        if (voiceState === "connected") {
+        if (voiceStateRef.current === "connected") {
           setVoiceTranscript(errorMessage.content);
           speakText(errorMessage.content);
         }
@@ -601,7 +623,7 @@ export default function ChatbotWidget() {
         setIsLoading(false);
       }
     },
-    [inputValue, isLoading, messages, viewMode, voiceState, speakText]
+    [inputValue, isLoading, messages, viewMode, speakText]
   );
 
   useEffect(() => {
@@ -611,12 +633,14 @@ export default function ChatbotWidget() {
   // Start voice agent session
   const handleStartVoice = () => {
     setCallDuration(0);
+    voiceStateRef.current = "connecting";
     setVoiceState("connecting");
     const welcomeSpeech =
       "Hello. Welcome to Greenly Landscaping. I can answer questions about lawn mowing, tree trimming, irrigation, and free estimates. How can I help you today?";
     setVoiceTranscript(welcomeSpeech);
 
     setTimeout(() => {
+      voiceStateRef.current = "connected";
       setVoiceState("connected");
       speakText(welcomeSpeech);
     }, 500);
@@ -624,11 +648,12 @@ export default function ChatbotWidget() {
 
   // End voice agent session
   const handleEndVoice = () => {
+    voiceStateRef.current = "idle";
+    setVoiceState("idle");
     stopListening();
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
-    setVoiceState("idle");
     setCallDuration(0);
     setIsSpeaking(false);
     setIsListening(false);
@@ -637,12 +662,14 @@ export default function ChatbotWidget() {
 
   // Toggle Mute
   const handleToggleMute = () => {
-    if (isMuted) {
+    if (isMutedRef.current) {
+      isMutedRef.current = false;
       setIsMuted(false);
       if (!isSpeaking) {
         startListening();
       }
     } else {
+      isMutedRef.current = true;
       setIsMuted(true);
       stopListening();
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -750,7 +777,7 @@ export default function ChatbotWidget() {
 
       if (isBullet) {
         return (
-          <div key={lineIdx} className="flex items-start gap-1.5 my-1 text-sm">
+          <div key={lineIdx} className="flex items-start gap-1.5 my-1 first:mt-0 last:mb-0 text-sm">
             <span className="text-neutral-500 font-bold select-none">•</span>
             <div className="flex-1">{renderInlineFormatted(cleanLine)}</div>
           </div>
@@ -758,7 +785,7 @@ export default function ChatbotWidget() {
       }
 
       return (
-        <p key={lineIdx} className="my-1 text-sm leading-relaxed">
+        <p key={lineIdx} className="my-1 first:mt-0 last:mb-0 text-sm leading-relaxed">
           {renderInlineFormatted(cleanLine)}
         </p>
       );
@@ -766,27 +793,27 @@ export default function ChatbotWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end print:hidden">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end print:hidden">
       {/* Expanded Widget Card */}
       {isOpen && (
         <div
           role="dialog"
           aria-label="Greenly Conversational Agent"
           data-lenis-prevent
-          className="mb-4 w-[calc(100vw-2.5rem)] max-w-[370px] sm:w-[370px] h-[520px] max-h-[85vh] bg-white rounded-[32px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.18)] border border-neutral-200/80 flex flex-col overflow-hidden animate-chat-window transition-all"
+          className="mb-4 w-[calc(100vw-2rem)] sm:w-[370px] max-w-[370px] h-[520px] max-h-[85vh] bg-white rounded-[32px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.18)] border border-neutral-200/80 flex flex-col overflow-hidden animate-chat-window transition-all"
         >
           {viewMode === "voice" ? (
             /* ================= VIEW 1: VOICE AGENT CARD (Matches Screenshots 2 & 4) ================= */
-            <div className="flex-1 flex flex-col justify-between p-6 overflow-hidden relative bg-white">
+            <div className="flex-1 min-h-0 flex flex-col justify-between p-6 overflow-hidden relative bg-white">
               {/* Top Header */}
-              <div className="relative flex items-center justify-between w-full z-20">
+              <div className="relative flex items-center justify-between w-full z-20 shrink-0">
                 {/* Left: Chat history toggle */}
                 <button
                   type="button"
                   onClick={() => setViewMode("chat")}
                   title="Open chat messages"
                   aria-label="Open chat messages"
-                  className="w-9 h-9 rounded-full bg-neutral-100/90 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                  className="w-9 h-9 rounded-full bg-neutral-100/90 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer shadow-xs"
                 >
                   <MessagesSquare className="w-4 h-4" />
                 </button>
@@ -796,7 +823,7 @@ export default function ChatbotWidget() {
                   <button
                     type="button"
                     onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-                    className="rounded-full border border-neutral-200/90 bg-white px-3.5 py-1.5 flex items-center gap-2 text-xs font-medium text-neutral-700 shadow-2xs hover:bg-neutral-50 transition-colors cursor-pointer select-none"
+                    className="rounded-full border border-neutral-200/90 bg-white px-3.5 py-1.5 flex items-center gap-2 text-xs font-medium text-neutral-700 shadow-xs hover:bg-neutral-50 transition-colors cursor-pointer select-none"
                     aria-label="Select language"
                     aria-expanded={isLangDropdownOpen}
                   >
@@ -850,7 +877,7 @@ export default function ChatbotWidget() {
                   }}
                   title="Minimize chat"
                   aria-label="Minimize"
-                  className="w-9 h-9 rounded-full bg-neutral-100/90 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                  className="w-9 h-9 rounded-full bg-neutral-100/90 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer shadow-xs"
                 >
                   <Minimize2 className="w-4 h-4" />
                 </button>
@@ -872,7 +899,7 @@ export default function ChatbotWidget() {
                       aria-label="End voice chat"
                       className="w-14 h-14 rounded-full bg-rose-500 hover:bg-rose-600 shadow-[0_4px_16px_rgba(244,63,94,0.35)] flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-transform cursor-pointer group"
                     >
-                      <PhoneOff className="w-5 h-5 fill-white group-hover:rotate-12 transition-transform" />
+                      <PhoneOff className="w-5 h-5 text-white group-hover:rotate-12 transition-transform" />
                     </button>
                   ) : (
                     /* Idle State: Circular White Phone Button (Matches Screenshot 2) */
@@ -883,7 +910,7 @@ export default function ChatbotWidget() {
                       aria-label="Start voice chat"
                       className="w-14 h-14 rounded-full bg-white shadow-[0_4px_16px_rgba(0,0,0,0.12)] flex items-center justify-center hover:scale-105 active:scale-95 transition-transform cursor-pointer group"
                     >
-                      <PhoneHandsetIcon className="w-5 h-5 fill-neutral-900 group-hover:rotate-12 transition-transform" />
+                      <PhoneHandsetIcon className="w-5 h-5 text-neutral-900 group-hover:rotate-12 transition-transform" />
                     </button>
                   )}
                 </VoiceOrb>
@@ -892,7 +919,7 @@ export default function ChatbotWidget() {
                 {voiceState === "connected" ? (
                   <div className="mt-5 flex flex-col items-center text-center max-w-[280px]">
                     {/* Status Pill & Wave Bars */}
-                    <div className="flex items-center gap-2 px-3 py-1 bg-neutral-100 rounded-full text-xs font-medium text-neutral-700 shadow-2xs">
+                    <div className="flex items-center gap-2 px-3 py-1 bg-neutral-100 rounded-full text-xs font-medium text-neutral-700 shadow-xs">
                       <span
                         className={`w-2 h-2 rounded-full ${
                           isListening ? "bg-amber-500" : "bg-emerald-500"
@@ -936,13 +963,13 @@ export default function ChatbotWidget() {
               </div>
 
               {/* Bottom Bar: Pill Input Container (Exact Match to Screenshot 2) */}
-              <div className="w-full">
+              <div className="w-full shrink-0">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
                     handleSendMessage();
                   }}
-                  className="w-full rounded-full border border-neutral-200/90 bg-white px-4 py-2.5 sm:py-3 flex items-center justify-between shadow-2xs hover:border-neutral-300 focus-within:border-neutral-400 focus-within:shadow-xs transition-all"
+                  className="w-full rounded-full border border-neutral-200/90 bg-white px-4 py-2.5 sm:py-3 flex items-center justify-between shadow-xs hover:border-neutral-300 focus-within:border-neutral-400 transition-all"
                 >
                   <input
                     type="text"
@@ -960,26 +987,26 @@ export default function ChatbotWidget() {
                     aria-label="Send message"
                     className="p-1.5 text-neutral-400 hover:text-neutral-800 disabled:opacity-40 transition-colors cursor-pointer shrink-0"
                   >
-                    <SolidPaperPlaneIcon className="w-4 h-4 fill-current" />
+                    <SolidPaperPlaneIcon className="w-4 h-4 text-current" />
                   </button>
                 </form>
               </div>
             </div>
           ) : (
             /* ================= VIEW 2: TEXT CHAT THREAD VIEW (Matches Screenshot 3) ================= */
-            <div className="flex-1 flex flex-col justify-between h-full bg-white overflow-hidden relative">
+            <div className="flex-1 min-h-0 flex flex-col justify-between h-full bg-white overflow-hidden relative">
               {/* Top Header: Orb with Back Chevron on Left, Minimize on Right */}
-              <div className="p-6 pb-2 flex items-center justify-between w-full select-none z-20">
+              <div className="p-6 pb-2 flex items-center justify-between w-full select-none z-20 shrink-0">
                 {/* Top-left: Circular gradient orb with back arrow (< / ChevronLeft) to return to Voice view */}
                 <button
                   type="button"
                   onClick={() => setViewMode("voice")}
                   title="Return to voice view"
                   aria-label="Return to voice view"
-                  className="relative cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-95 focus:outline-none"
+                  className="relative rounded-full cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-95 focus:outline-none"
                 >
-                  <VoiceOrb size="sm" className="!w-9 !h-9 shadow-xs">
-                    <ChevronLeft className="w-4.5 h-4.5 text-white stroke-[2.5]" />
+                  <VoiceOrb size="md">
+                    <ChevronLeft className="w-4 h-4 text-white stroke-[2.5] -translate-x-0.5" />
                   </VoiceOrb>
                 </button>
 
@@ -994,7 +1021,7 @@ export default function ChatbotWidget() {
                   }}
                   title="Minimize chat"
                   aria-label="Minimize"
-                  className="w-9 h-9 rounded-full bg-neutral-100/90 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                  className="w-9 h-9 rounded-full bg-neutral-100/90 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer shadow-xs"
                 >
                   <Minimize2 className="w-4 h-4" />
                 </button>
@@ -1003,7 +1030,7 @@ export default function ChatbotWidget() {
               {/* Message Thread */}
               <div
                 data-lenis-prevent
-                className="flex-1 overflow-y-auto px-6 py-2 space-y-3 bg-white"
+                className="flex-1 min-h-0 overflow-y-auto px-6 py-2 space-y-3 bg-white"
               >
                 {messages.map((message) => {
                   const isUser = message.role === "user";
@@ -1015,7 +1042,7 @@ export default function ChatbotWidget() {
                       <div
                         className={
                           isUser
-                            ? "bg-white border border-neutral-200/90 rounded-[20px] px-4 py-2.5 text-sm text-neutral-800 max-w-[85%] shadow-2xs break-words"
+                            ? "bg-white border border-neutral-200/90 rounded-[20px] px-4 py-2.5 text-sm text-neutral-800 max-w-[85%] shadow-xs break-words"
                             : "bg-neutral-100 rounded-[20px] p-4 text-sm text-neutral-800 leading-relaxed max-w-[85%] break-words"
                         }
                       >
@@ -1032,7 +1059,7 @@ export default function ChatbotWidget() {
                 {/* Typing Indicator */}
                 {isLoading && (
                   <div className="flex justify-start w-full">
-                    <div className="bg-neutral-100 rounded-[20px] px-4 py-3 flex items-center gap-1.5 shadow-2xs">
+                    <div className="bg-neutral-100 rounded-[20px] px-4 py-3 flex items-center gap-1.5 shadow-xs">
                       <span className="w-2 h-2 rounded-full bg-neutral-400 animate-bounce [animation-delay:-0.3s]" />
                       <span className="w-2 h-2 rounded-full bg-neutral-400 animate-bounce [animation-delay:-0.15s]" />
                       <span className="w-2 h-2 rounded-full bg-neutral-400 animate-bounce" />
@@ -1044,13 +1071,13 @@ export default function ChatbotWidget() {
               </div>
 
               {/* Bottom Bar: The exact same clean rounded-full pill input bar */}
-              <div className="p-6 pt-2 w-full">
+              <div className="p-6 pt-2 w-full shrink-0">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
                     handleSendMessage();
                   }}
-                  className="w-full rounded-full border border-neutral-200/90 bg-white px-4 py-2.5 sm:py-3 flex items-center justify-between shadow-2xs hover:border-neutral-300 focus-within:border-neutral-400 focus-within:shadow-xs transition-all"
+                  className="w-full rounded-full border border-neutral-200/90 bg-white px-4 py-2.5 sm:py-3 flex items-center justify-between shadow-xs hover:border-neutral-300 focus-within:border-neutral-400 transition-all"
                 >
                   <input
                     ref={inputRef}
@@ -1069,7 +1096,7 @@ export default function ChatbotWidget() {
                     aria-label="Send message"
                     className="p-1.5 text-neutral-400 hover:text-neutral-800 disabled:opacity-40 transition-colors cursor-pointer shrink-0"
                   >
-                    <SolidPaperPlaneIcon className="w-4 h-4 fill-current" />
+                    <SolidPaperPlaneIcon className="w-4 h-4 text-current" />
                   </button>
                 </form>
               </div>
