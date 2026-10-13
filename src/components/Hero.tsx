@@ -26,7 +26,7 @@ export default function Hero({ onOpenQuote, onOpenVideo }: HeroProps) {
       </div>
 
       {/* Content Container aligned with site grid */}
-      <div className="max-w-[1204px] mx-auto w-full px-4 sm:px-8 relative z-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-10">
+      <div className="max-w-[1610px] mx-auto w-full px-4 sm:px-8 lg:px-[80px] relative z-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-10">
         {/* Left Column: Heading and CTA */}
         <div className="max-w-xl text-white">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[68px] font-serif leading-[1.08] tracking-tight font-normal">

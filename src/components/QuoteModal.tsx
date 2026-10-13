@@ -78,24 +78,24 @@ export default function QuoteModal({ isOpen, onClose, defaultService = "Lawn Mow
   return (
     <div
       data-lenis-prevent
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 sm:p-6 transition-all duration-300"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-0 transition-all duration-300"
       onClick={handleClose}
     >
       <div
         data-lenis-prevent
-        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[#ffffff] rounded-2xl shadow-2xl border border-[#e2dec9] text-[#1f1f1f] p-6 sm:p-8 animate-in fade-in zoom-in-95 duration-200"
+        className="relative w-full max-w-lg h-[100vh] max-h-[100vh] overflow-y-auto bg-[#ffffff] rounded-none sm:rounded-2xl shadow-2xl border border-[#e2dec9] text-[#1f1f1f] p-6 sm:p-8 flex flex-col animate-in fade-in duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={handleClose}
-          className="absolute top-5 right-5 p-2 rounded-full text-[#606060] hover:text-[#1f1f1f] hover:bg-[#f2f1e7] transition-colors"
+          className="absolute top-5 right-5 z-10 p-2 rounded-full text-[#606060] hover:text-[#1f1f1f] hover:bg-[#f2f1e7] transition-colors"
           aria-label="Close modal"
         >
           <X className="w-5 h-5" />
         </button>
 
         {isSubmitted ? (
-          <div className="py-10 text-center space-y-4">
+          <div className="py-10 text-center space-y-4 my-auto">
             <div className="w-16 h-16 rounded-full bg-[#bedd25]/20 text-[#274839] flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-10 h-10 text-[#274839]" />
             </div>

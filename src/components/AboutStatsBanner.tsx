@@ -21,7 +21,7 @@ const defaultStats: StatItem[] = [
 export default function AboutStatsBanner({ stats = defaultStats }: AboutStatsBannerProps) {
   return (
     <section className="w-full bg-[#f1efd9] py-10 sm:py-14 my-8 sm:my-12">
-      <div className="max-w-[1204px] mx-auto px-4 sm:px-6 md:px-8">
+      <div className="max-w-[1610px] mx-auto px-4 sm:px-8 lg:px-[80px]">
         <div className="max-w-[1007px] mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 items-center justify-between">
           {stats.map((item, idx) => (
             <div

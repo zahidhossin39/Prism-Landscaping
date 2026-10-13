@@ -17,8 +17,8 @@ export default function AboutSection({
   ctaHref,
 }: AboutSectionProps) {
   return (
-    <section id="about" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8">
-      <div className="max-w-[1204px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+    <section id="about" className="py-16 sm:py-24 px-4 sm:px-8 lg:px-[80px]">
+      <div className="max-w-[1610px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         {/* Left Column: Image with rounded frame */}
         <div className="lg:col-span-6">
           <div className="relative rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-xl border border-[#e2dec9] aspect-[4/4.4] sm:aspect-[4/4.2] max-w-[520px] mx-auto lg:max-w-none">

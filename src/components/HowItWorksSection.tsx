@@ -36,8 +36,8 @@ const steps = [
 
 export default function HowItWorksSection() {
   return (
-    <section className="pt-16 sm:pt-24 pb-20 sm:pb-32 lg:pb-48 px-4 sm:px-6 md:px-8">
-      <div className="max-w-[1204px] mx-auto">
+    <section className="pt-16 sm:pt-24 pb-20 sm:pb-32 lg:pb-48 px-4 sm:px-8 lg:px-[80px]">
+      <div className="max-w-[1610px] mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((item, idx) => (
             <div

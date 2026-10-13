@@ -110,10 +110,10 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
   return (
     <header
       ref={headerRef}
-      className="fixed top-0 left-0 right-0 z-40 w-full px-4 sm:px-8 pt-4 sm:pt-6 transition-all duration-300"
+      className="fixed top-0 left-0 right-0 z-40 w-full px-4 sm:px-8 lg:px-[80px] pt-4 sm:pt-6 transition-all duration-300"
     >
       <div
-        className={`max-w-[1204px] mx-auto rounded-[10px] px-4 sm:px-5 md:pl-5 md:pr-[13px] py-2.5 sm:py-[13px] transition-all duration-300 flex items-center justify-between ${
+        className={`max-w-[1610px] mx-auto rounded-[10px] px-4 sm:px-5 md:pl-5 md:pr-[13px] py-2.5 sm:py-[13px] transition-all duration-300 flex items-center justify-between ${
           isScrolled
             ? "bg-[#ffffff]/95 backdrop-blur-md shadow-sm border border-[#e5e3d7]"
             : "bg-[#ffffff] shadow-sm border border-[#e8e6dc]"
@@ -348,7 +348,7 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
           role="region"
           aria-label="Mobile Navigation"
           data-lenis-prevent
-          className="md:hidden mt-2 mx-auto max-w-[1204px] max-h-[calc(100vh-100px)] overflow-y-auto bg-[#ffffff] rounded-[10px] shadow-xl border border-[#e5e3d7] p-5 space-y-4 animate-in fade-in slide-in-from-top-3 duration-200"
+          className="md:hidden mt-2 mx-auto max-w-[1610px] max-h-[calc(100vh-100px)] overflow-y-auto bg-[#ffffff] rounded-[10px] shadow-xl border border-[#e5e3d7] p-5 space-y-4 animate-in fade-in slide-in-from-top-3 duration-200"
         >
           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm font-medium text-[#1f1f1f]">
             {/* Left column */}

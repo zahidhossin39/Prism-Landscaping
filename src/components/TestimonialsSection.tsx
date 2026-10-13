@@ -56,8 +56,8 @@ export default function TestimonialsSection({
   const current = testimonials[currentIndex];
 
   return (
-    <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-8">
-      <div className="max-w-[1204px] mx-auto">
+    <section className="py-16 sm:py-24 px-4 sm:px-8 lg:px-[80px]">
+      <div className="max-w-[1610px] mx-auto">
         {/* Section Heading */}
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
           {title ? (

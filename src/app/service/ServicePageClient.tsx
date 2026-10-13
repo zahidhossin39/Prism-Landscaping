@@ -30,8 +30,8 @@ export default function ServicePageClient() {
       <Navbar onOpenQuote={handleOpenQuote} />
 
       {/* Hero Section: 3-image collage + Heading */}
-      <section className="w-full pt-[140px] sm:pt-[160px] lg:pt-[180px] pb-10 sm:pb-16 px-4 sm:px-6 md:px-8">
-        <div className="max-w-[1204px] mx-auto">
+      <section className="w-full pt-[140px] sm:pt-[160px] lg:pt-[180px] pb-10 sm:pb-16 px-4 sm:px-8 lg:px-[80px]">
+        <div className="max-w-[1610px] mx-auto">
           {/* Desktop Layout (lg+) matching Framer 3-column collage */}
           <div className="hidden lg:flex items-end justify-between gap-6 lg:gap-8">
             {/* Left Hero Image */}
@@ -153,8 +153,8 @@ export default function ServicePageClient() {
       </section>
 
       {/* Explore Our Services Grid Section */}
-      <section id="service" className="w-full py-10 sm:py-16 lg:py-20 px-4 sm:px-6 md:px-8">
-        <div className="max-w-[1204px] mx-auto">
+      <section id="service" className="w-full py-10 sm:py-16 lg:py-20 px-4 sm:px-8 lg:px-[80px]">
+        <div className="max-w-[1610px] mx-auto">
           {/* Section Heading matching Framer left-aligned layout */}
           <h2 className="text-3xl sm:text-4xl lg:text-[48px] font-medium text-[#1f1f1f] tracking-[-1px] sm:tracking-[-1.5px] lg:tracking-[-2px] leading-tight mb-8 sm:mb-12 text-left">
             Explore Our{" "}

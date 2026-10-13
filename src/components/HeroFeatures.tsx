@@ -26,8 +26,8 @@ const features = [
 
 export default function HeroFeatures() {
   return (
-    <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-8 border-b border-[#e2dec9]">
-      <div className="max-w-[1204px] mx-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#dedbc8]">
+    <section className="py-12 sm:py-16 px-4 sm:px-8 lg:px-[80px] border-b border-[#e2dec9]">
+      <div className="max-w-[1610px] mx-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#dedbc8]">
         {features.map((item, idx) => {
           const Icon = item.icon;
           return (

@@ -63,7 +63,7 @@ export default function CtaBanner({
       <div className="absolute inset-0 z-[1] bg-[#274839]/85 sm:bg-[#274839]/80 lg:hidden pointer-events-none" />
 
       {/* Content Container */}
-      <div className="relative z-10 max-w-[1204px] mx-auto px-4 sm:px-6 md:px-8 pt-16 sm:pt-20 lg:pt-28 pb-48 sm:pb-64 lg:pb-[380px]">
+      <div className="relative z-10 max-w-[1610px] mx-auto px-4 sm:px-8 lg:px-[80px] pt-16 sm:pt-20 lg:pt-28 pb-48 sm:pb-64 lg:pb-[380px]">
         <div className="max-w-[440px] space-y-5 sm:space-y-6">
           <h2 className="text-3xl sm:text-4xl lg:text-[48px] font-medium leading-[1.2] tracking-[-1.5px] lg:tracking-[-2px]">
             {title}{" "}

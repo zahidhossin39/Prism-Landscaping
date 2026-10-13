@@ -6,8 +6,8 @@ import { Sprout, ShieldCheck } from "lucide-react";
 
 export default function AboutMissionVision() {
   return (
-    <section className="py-14 sm:py-20 lg:py-24 px-4 sm:px-6 md:px-8">
-      <div className="max-w-[1204px] mx-auto">
+    <section className="py-14 sm:py-20 lg:py-24 px-4 sm:px-8 lg:px-[80px]">
+      <div className="max-w-[1610px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Column: Gardener Photo */}
           <div className="lg:col-span-5">

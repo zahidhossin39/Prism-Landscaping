@@ -10,8 +10,8 @@ interface FooterProps {
 
 export default function Footer({ onOpenQuote }: FooterProps) {
   return (
-    <footer id="site-footer" className="bg-[#274839] text-white pt-16 sm:pt-20 pb-12 px-4 sm:px-6 md:px-8 border-t border-[#345c4a]">
-      <div className="max-w-[1204px] mx-auto">
+    <footer id="site-footer" className="bg-[#274839] text-white pt-16 sm:pt-20 pb-12 px-4 sm:px-8 lg:px-[80px] border-t border-[#345c4a]">
+      <div className="max-w-[1610px] mx-auto">
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-14 border-b border-white/10">
           {/* Brand Info (Col 1) */}

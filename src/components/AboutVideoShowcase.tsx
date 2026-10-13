@@ -18,8 +18,8 @@ export default function AboutVideoShowcase({ onOpenVideo }: AboutVideoShowcasePr
   };
 
   return (
-    <section className="py-12 sm:py-20 px-4 sm:px-6 md:px-8">
-      <div className="max-w-[1204px] mx-auto">
+    <section className="py-12 sm:py-20 px-4 sm:px-8 lg:px-[80px]">
+      <div className="max-w-[1610px] mx-auto">
         {/* Full-width Video Showcase Card */}
         <div
           onClick={handleClick}

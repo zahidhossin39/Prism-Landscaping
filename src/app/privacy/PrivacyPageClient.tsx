@@ -83,8 +83,8 @@ export default function PrivacyPageClient() {
       <Navbar onOpenQuote={handleOpenQuote} />
 
       {/* 2. Page Header & Policy Content matching Framer template */}
-      <section className="w-full pt-[140px] md:pt-[160px] lg:pt-[183px] pb-[60px] md:pb-[80px] lg:pb-[100px] px-5 md:px-[30px]">
-        <div className="max-w-[1204px] mx-auto">
+      <section className="w-full pt-[140px] md:pt-[160px] lg:pt-[183px] pb-[60px] md:pb-[80px] lg:pb-[100px] px-4 sm:px-8 lg:px-[80px]">
+        <div className="max-w-[1610px] mx-auto">
           {/* Page Header */}
           <div className="text-center space-y-5">
             <h1 className="text-[38px] sm:text-[52px] lg:text-[62px] font-medium text-[#1f1f1f] tracking-[-1px] sm:tracking-[-1.5px] lg:tracking-[-2px] leading-[1.2]">

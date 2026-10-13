@@ -55,8 +55,8 @@ export default function ContactPageClient() {
       <Navbar onOpenQuote={handleOpenQuote} />
 
       {/* Main Contact Hero Section matching Framer layout */}
-      <section className="w-full pt-[140px] sm:pt-[160px] lg:pt-[183px] pb-[60px] sm:pb-[80px] lg:pb-[100px] px-5 sm:px-8">
-        <div className="max-w-[1204px] mx-auto">
+      <section className="w-full pt-[140px] sm:pt-[160px] lg:pt-[183px] pb-[60px] sm:pb-[80px] lg:pb-[100px] px-4 sm:px-8 lg:px-[80px]">
+        <div className="max-w-[1610px] mx-auto">
           <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-10 lg:gap-14">
             {/* Left Column: Heading, Subtitle & Info Card */}
             <div className="w-full lg:max-w-[414px] flex flex-col items-start gap-6 sm:gap-8">

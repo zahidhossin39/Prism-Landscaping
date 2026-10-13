@@ -126,8 +126,8 @@ export default function TestimonialsPageClient() {
       <Navbar onOpenQuote={handleOpenQuote} />
 
       {/* Hero Section */}
-      <section className="w-full pt-[140px] sm:pt-[160px] lg:pt-[180px] pb-12 sm:pb-16 px-4 sm:px-6 md:px-8">
-        <div className="max-w-[1204px] mx-auto text-center">
+      <section className="w-full pt-[140px] sm:pt-[160px] lg:pt-[180px] pb-12 sm:pb-16 px-4 sm:px-8 lg:px-[80px]">
+        <div className="max-w-[1610px] mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f1efd9] border border-[#e5e3d7] text-xs font-semibold text-[#274839] mb-6">
             <CheckCircle2 className="w-4 h-4 text-[#bedd25]" />
             <span>Verified Customer Reviews</span>
@@ -175,8 +175,8 @@ export default function TestimonialsPageClient() {
       </section>
 
       {/* Featured Video Spotlight */}
-      <section className="py-8 sm:py-12 px-4 sm:px-6 md:px-8">
-        <div className="max-w-[1204px] mx-auto">
+      <section className="py-8 sm:py-12 px-4 sm:px-8 lg:px-[80px]">
+        <div className="max-w-[1610px] mx-auto">
           <div className="bg-[#274839] text-white rounded-[28px] sm:rounded-[36px] p-6 sm:p-10 lg:p-12 overflow-hidden shadow-xl relative">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-5 relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg border border-white/20 group cursor-pointer"
@@ -230,8 +230,8 @@ export default function TestimonialsPageClient() {
       </section>
 
       {/* 6-Card Reviews Grid */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-8">
-        <div className="max-w-[1204px] mx-auto">
+      <section className="py-12 sm:py-16 px-4 sm:px-8 lg:px-[80px]">
+        <div className="max-w-[1610px] mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-3xl sm:text-4xl font-serif text-[#1f1f1f]">
               More Customer{" "}

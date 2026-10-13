@@ -45,8 +45,8 @@ export default function BlogIndexClient({
       <Navbar onOpenQuote={handleOpenQuote} />
 
       {/* Main Container */}
-      <div className="pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-24 px-4 sm:px-6 md:px-8">
-        <div className="max-w-[1204px] mx-auto">
+      <div className="pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-24 px-4 sm:px-8 lg:px-[80px]">
+        <div className="max-w-[1610px] mx-auto">
           {/* Page Heading matching Screenshot 1 */}
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
             <h1 className="text-4xl sm:text-5xl md:text-[62px] font-sans font-medium text-[#1f1f1f] tracking-[-1.5px] md:tracking-[-2px] leading-tight">

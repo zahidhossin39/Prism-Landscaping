@@ -45,8 +45,8 @@ export default function GallerySection({
   }, [selectedImage]);
 
   return (
-    <section id="gallery" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8">
-      <div className="max-w-[1204px] mx-auto">
+    <section id="gallery" className="py-16 sm:py-24 px-4 sm:px-8 lg:px-[80px]">
+      <div className="max-w-[1610px] mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 mb-12 sm:mb-16">
           <div>

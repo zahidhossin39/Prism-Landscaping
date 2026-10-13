@@ -220,8 +220,8 @@ export default function GalleryPageClient() {
       <Navbar onOpenQuote={handleOpenQuote} />
 
       {/* 2. Hero Section */}
-      <section className="pt-[140px] sm:pt-[160px] lg:pt-[180px] pb-6 sm:pb-8 px-4 sm:px-6 md:px-8">
-        <div className="max-w-[1204px] mx-auto text-center">
+      <section className="pt-[140px] sm:pt-[160px] lg:pt-[180px] pb-6 sm:pb-8 px-4 sm:px-8 lg:px-[80px]">
+        <div className="max-w-[1610px] mx-auto text-center">
           <h1 className="text-[38px] sm:text-[50px] lg:text-[64px] font-medium text-[#1f1f1f] tracking-[-1.5px] lg:tracking-[-2px] leading-[1.15] max-w-4xl mx-auto">
             Our Landscaping{" "}
             <span className="font-serif italic font-normal text-[#1f1f1f]">
@@ -238,8 +238,8 @@ export default function GalleryPageClient() {
       </section>
 
       {/* 3. Large Landscape Featured Photo */}
-      <section className="px-4 sm:px-6 md:px-8 pb-8 sm:pb-12">
-        <div className="max-w-[1204px] mx-auto">
+      <section className="px-4 sm:px-8 lg:px-[80px] pb-8 sm:pb-12">
+        <div className="max-w-[1610px] mx-auto">
           <div
             onClick={() => openLightbox(featuredPhoto)}
             className="group cursor-pointer relative aspect-[2408/1278] w-full rounded-[12px] overflow-hidden bg-black/5 shadow-sm border border-[#e5e3d7] transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
@@ -249,7 +249,7 @@ export default function GalleryPageClient() {
               alt={featuredPhoto.title}
               fill
               priority
-              sizes="(min-width: 1200px) 1204px, (min-width: 768px) calc(100vw - 60px), calc(100vw - 32px)"
+              sizes="(min-width: 1610px) 1610px, (min-width: 768px) calc(100vw - 60px), calc(100vw - 32px)"
               className="object-cover transition-transform duration-700 group-hover:scale-103"
             />
             <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">
@@ -262,8 +262,8 @@ export default function GalleryPageClient() {
       </section>
 
       {/* 4. 3-Column Asymmetric Masonry Gallery Grid */}
-      <section className="py-6 sm:py-10 px-4 sm:px-6 md:px-8">
-        <div className="max-w-[1204px] mx-auto">
+      <section className="py-6 sm:py-10 px-4 sm:px-8 lg:px-[80px]">
+        <div className="max-w-[1610px] mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
             {/* Column 1: Short top, tall, short, tall */}
             <div className="flex flex-col gap-5">

@@ -34,8 +34,8 @@ export default function ServiceDetailClient({
       <Navbar onOpenQuote={handleOpenQuote} />
 
       {/* Hero Header Section */}
-      <header className="w-full pt-[140px] sm:pt-[160px] lg:pt-[180px] pb-6 sm:pb-8 px-4 sm:px-6 md:px-8">
-        <div className="max-w-[1204px] mx-auto flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-8">
+      <header className="w-full pt-[140px] sm:pt-[160px] lg:pt-[180px] pb-6 sm:pb-8 px-4 sm:px-8 lg:px-[80px]">
+        <div className="max-w-[1610px] mx-auto flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-8">
           <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-medium text-[#1f1f1f] tracking-[-1.5px] lg:tracking-[-2px] leading-[1.12]">
             {service.title}
           </h1>
@@ -45,14 +45,14 @@ export default function ServiceDetailClient({
         </div>
 
         {/* Large Rounded Landscape Hero Photo */}
-        <div className="max-w-[1204px] mx-auto mt-8 sm:mt-12">
+        <div className="max-w-[1610px] mx-auto mt-8 sm:mt-12">
           <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[1204/540] rounded-[16px] sm:rounded-[22px] overflow-hidden shadow-sm bg-[#e5e3d7]">
             <Image
               src={service.heroImage}
               alt={service.title}
               fill
               priority
-              sizes="(max-width: 1204px) 100vw, 1204px"
+              sizes="(max-width: 1610px) 100vw, 1610px"
               className="object-cover"
             />
           </div>

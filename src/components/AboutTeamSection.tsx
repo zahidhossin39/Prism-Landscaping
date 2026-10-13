@@ -34,8 +34,8 @@ const teamMembers: TeamMember[] = [
 
 export default function AboutTeamSection() {
   return (
-    <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-8">
-      <div className="max-w-[1204px] mx-auto">
+    <section className="py-16 sm:py-24 px-4 sm:px-8 lg:px-[80px]">
+      <div className="max-w-[1610px] mx-auto">
         {/* Section Heading */}
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-[#1f1f1f] leading-tight font-normal">

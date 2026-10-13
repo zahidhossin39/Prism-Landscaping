@@ -37,8 +37,8 @@ export default function BlogDetailClient({
       <Navbar onOpenQuote={handleOpenQuote} />
 
       {/* Main Blog Article Container */}
-      <article className="pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-24 px-4 sm:px-6 md:px-8">
-        <div className="max-w-[1204px] mx-auto">
+      <article className="pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-24 px-4 sm:px-8 lg:px-[80px]">
+        <div className="max-w-[1610px] mx-auto">
           {/* Header: Date + Title matching Screenshot 2 */}
           <div className="text-center max-w-4xl mx-auto mb-10 sm:mb-14">
             <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">

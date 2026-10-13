@@ -32,9 +32,9 @@ export default function NotFoundClient() {
         <Navbar onOpenQuote={handleOpenQuote} />
 
         {/* 404 Hero Section matching Framer .framer-53kd0j */}
-        <section className="flex-1 flex flex-col items-center justify-center pt-[120px] md:pt-[120px] lg:pt-[203px] pb-[60px] md:pb-[80px] lg:pb-[150px] px-5 sm:px-[30px] w-full">
+        <section className="flex-1 flex flex-col items-center justify-center pt-[120px] md:pt-[120px] lg:pt-[203px] pb-[60px] md:pb-[80px] lg:pb-[150px] px-4 sm:px-8 lg:px-[80px] w-full">
           {/* Framer Container .framer-8hb6ua */}
-          <div className="w-full max-w-[1208px] mx-auto flex flex-col items-center justify-center gap-5 sm:gap-[30px] lg:gap-[48px]">
+          <div className="w-full max-w-[1610px] mx-auto flex flex-col items-center justify-center gap-5 sm:gap-[30px] lg:gap-[48px]">
             {/* Authentic 404 Moss & Grass 3D Artwork .framer-1ndbrr2 */}
             <div className="w-full max-w-[712px] aspect-[1424/776] relative flex items-center justify-center">
               <Image
