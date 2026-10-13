@@ -453,6 +453,7 @@ export async function POST(req: Request) {
         const candidate = m as { role?: unknown; content?: unknown };
         return (
           typeof candidate.content === "string" &&
+          candidate.content.trim().length > 0 &&
           (candidate.role === "user" || candidate.role === "assistant")
         );
       })
@@ -517,10 +518,11 @@ export async function POST(req: Request) {
         new Set([
           configuredModel,
           "gemini-2.5-flash-lite",
+          "gemini-2.0-flash",
+          "gemini-2.0-flash-lite",
+          "gemini-1.5-flash",
           "gemini-flash-latest",
           "gemini-flash-lite-latest",
-          "gemini-3.8-flash",
-          "gemini-3.5-flash",
         ])
       );
 

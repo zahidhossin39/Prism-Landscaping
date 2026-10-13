@@ -23,7 +23,7 @@ export default function CtaBanner({
   highlight = "with Experts",
   subtitle = "Relax and enjoy a greener, more beautiful garden—expertly crafted to match your vision.",
   buttonText = "Get A Free Quote",
-  buttonHref = "/contact-us",
+  buttonHref,
   showArrow = false,
 }: CtaBannerProps) {
   // If highlight starts with "Garden", split cleanly so "Garden" is white sans-serif and "with Experts" is green italic

@@ -319,12 +319,22 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
 
         {/* Right CTA */}
         <div className="flex items-center gap-3">
-          <Link
-            href="/contact-us"
-            className="hidden md:inline-flex items-center justify-center bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] px-[21px] py-[8px] rounded-[8px] text-[16px] font-medium tracking-[-0.2px] transition-all duration-200 shadow-sm hover:shadow cursor-pointer whitespace-nowrap"
-          >
-            Get A Free Quote
-          </Link>
+          {onOpenQuote ? (
+            <button
+              type="button"
+              onClick={() => onOpenQuote()}
+              className="hidden md:inline-flex items-center justify-center bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] px-[21px] py-[8px] rounded-[8px] text-[16px] font-medium tracking-[-0.2px] transition-all duration-200 shadow-sm hover:shadow cursor-pointer whitespace-nowrap"
+            >
+              Get A Free Quote
+            </button>
+          ) : (
+            <Link
+              href="/contact-us"
+              className="hidden md:inline-flex items-center justify-center bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] px-[21px] py-[8px] rounded-[8px] text-[16px] font-medium tracking-[-0.2px] transition-all duration-200 shadow-sm hover:shadow cursor-pointer whitespace-nowrap"
+            >
+              Get A Free Quote
+            </Link>
+          )}
 
           {/* Mobile hamburger button */}
           <button
@@ -467,13 +477,26 @@ export default function Navbar({ onOpenQuote }: NavbarProps) {
           </div>
 
           <div className="pt-2 border-t border-[#f1efd9]">
-            <Link
-              href="/contact-us"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block w-full py-2.5 px-5 rounded-[8px] bg-[#bedd25] hover:bg-[#adce1e] active:scale-[0.99] text-[#1f1f1f] font-medium text-[16px] tracking-[-0.2px] transition-all duration-200 text-center cursor-pointer shadow-sm hover:shadow"
-            >
-              Get A Free Quote
-            </Link>
+            {onOpenQuote ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenQuote();
+                }}
+                className="block w-full py-2.5 px-5 rounded-[8px] bg-[#bedd25] hover:bg-[#adce1e] active:scale-[0.99] text-[#1f1f1f] font-medium text-[16px] tracking-[-0.2px] transition-all duration-200 text-center cursor-pointer shadow-sm hover:shadow"
+              >
+                Get A Free Quote
+              </button>
+            ) : (
+              <Link
+                href="/contact-us"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block w-full py-2.5 px-5 rounded-[8px] bg-[#bedd25] hover:bg-[#adce1e] active:scale-[0.99] text-[#1f1f1f] font-medium text-[16px] tracking-[-0.2px] transition-all duration-200 text-center cursor-pointer shadow-sm hover:shadow"
+              >
+                Get A Free Quote
+              </Link>
+            )}
           </div>
         </div>
       )}

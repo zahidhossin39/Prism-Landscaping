@@ -332,7 +332,6 @@ export default function TestimonialsPageClient() {
         highlight="with Experts"
         subtitle="Relax and enjoy a greener, more beautiful garden—expertly crafted to match your vision."
         buttonText="Get A Free Quote"
-        buttonHref="/contact-us"
       />
 
       {/* Footer */}

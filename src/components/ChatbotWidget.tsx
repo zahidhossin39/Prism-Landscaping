@@ -334,6 +334,7 @@ export default function ChatbotWidget() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const connectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<ISpeechRecognitionInstance | null>(null);
 
@@ -362,6 +363,12 @@ export default function ChatbotWidget() {
   // Clean up speech synthesis & speech recognition on unmount
   useEffect(() => {
     return () => {
+      if (connectTimeoutRef.current) {
+        clearTimeout(connectTimeoutRef.current);
+      }
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
@@ -403,12 +410,17 @@ export default function ChatbotWidget() {
   // Stop recognition helper
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
+      const rec = recognitionRef.current;
+      recognitionRef.current = null;
+      rec.onstart = null;
+      rec.onresult = null;
+      rec.onerror = null;
+      rec.onend = null;
       try {
-        recognitionRef.current.abort();
+        rec.abort();
       } catch {
         // Ignore abort errors
       }
-      recognitionRef.current = null;
     }
     setIsListening(false);
   }, []);
@@ -527,8 +539,12 @@ export default function ChatbotWidget() {
           }
         };
 
-        utterance.onerror = () => {
+        utterance.onerror = (event: SpeechSynthesisErrorEvent) => {
           setIsSpeaking(false);
+          // If utterance was canceled or interrupted (e.g. by hang up, mute, or new speech), do not restart listening
+          if (event?.error === "canceled" || event?.error === "interrupted") {
+            return;
+          }
           if (!isMutedRef.current && voiceStateRef.current === "connected") {
             startListening();
           }
@@ -632,6 +648,9 @@ export default function ChatbotWidget() {
 
   // Start voice agent session
   const handleStartVoice = () => {
+    if (connectTimeoutRef.current) {
+      clearTimeout(connectTimeoutRef.current);
+    }
     setCallDuration(0);
     voiceStateRef.current = "connecting";
     setVoiceState("connecting");
@@ -639,7 +658,8 @@ export default function ChatbotWidget() {
       "Hello. Welcome to Greenly Landscaping. I can answer questions about lawn mowing, tree trimming, irrigation, and free estimates. How can I help you today?";
     setVoiceTranscript(welcomeSpeech);
 
-    setTimeout(() => {
+    connectTimeoutRef.current = setTimeout(() => {
+      connectTimeoutRef.current = null;
       voiceStateRef.current = "connected";
       setVoiceState("connected");
       speakText(welcomeSpeech);
@@ -648,6 +668,10 @@ export default function ChatbotWidget() {
 
   // End voice agent session
   const handleEndVoice = () => {
+    if (connectTimeoutRef.current) {
+      clearTimeout(connectTimeoutRef.current);
+      connectTimeoutRef.current = null;
+    }
     voiceStateRef.current = "idle";
     setVoiceState("idle");
     stopListening();
