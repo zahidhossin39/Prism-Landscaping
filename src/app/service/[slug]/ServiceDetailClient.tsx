@@ -46,7 +46,7 @@ export default function ServiceDetailClient({
 
         {/* Large Rounded Landscape Hero Photo */}
         <div className="max-w-[1610px] mx-auto mt-8 sm:mt-12">
-          <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[1204/540] rounded-[16px] sm:rounded-[22px] overflow-hidden shadow-sm bg-[#e5e3d7]">
+          <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[1610/722] rounded-[16px] sm:rounded-[22px] overflow-hidden shadow-sm bg-[#e5e3d7]">
             <Image
               src={service.heroImage}
               alt={service.title}

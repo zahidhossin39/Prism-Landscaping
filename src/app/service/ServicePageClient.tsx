@@ -177,7 +177,7 @@ export default function ServicePageClient() {
                     src={service.cardImage}
                     alt={service.title}
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 388px"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 520px"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>

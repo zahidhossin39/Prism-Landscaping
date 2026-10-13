@@ -83,7 +83,7 @@ export default function QuoteModal({ isOpen, onClose, defaultService = "Lawn Mow
     >
       <div
         data-lenis-prevent
-        className="relative w-full max-w-lg h-[100vh] max-h-[100vh] overflow-y-auto bg-[#ffffff] rounded-none sm:rounded-2xl shadow-2xl border border-[#e2dec9] text-[#1f1f1f] p-6 sm:p-8 flex flex-col animate-in fade-in duration-200"
+        className="relative w-full max-w-lg h-[100vh] max-h-[100vh] overflow-y-auto bg-[#ffffff] rounded-none shadow-2xl border border-[#e2dec9] text-[#1f1f1f] p-6 sm:p-8 flex flex-col animate-in fade-in duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -107,7 +107,7 @@ export default function QuoteModal({ isOpen, onClose, defaultService = "Lawn Mow
             </p>
           </div>
         ) : (
-          <div>
+          <div className="my-auto py-4">
             <div className="mb-6">
               <span className="text-xs uppercase tracking-wider font-semibold text-[#274839] bg-[#bedd25]/30 px-3 py-1 rounded-full">
                 Fast & Free Estimate

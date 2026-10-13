@@ -281,7 +281,7 @@ export default function GalleryPageClient() {
                     src={item.src}
                     alt={item.title}
                     fill
-                    sizes="(min-width: 1200px) 388px, (min-width: 768px) 33vw, 100vw"
+                    sizes="(min-width: 1610px) 523px, (min-width: 768px) 33vw, 100vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-106"
                   />
                   <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">
@@ -309,7 +309,7 @@ export default function GalleryPageClient() {
                     src={item.src}
                     alt={item.title}
                     fill
-                    sizes="(min-width: 1200px) 388px, (min-width: 768px) 33vw, 100vw"
+                    sizes="(min-width: 1610px) 523px, (min-width: 768px) 33vw, 100vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-106"
                   />
                   <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">
@@ -337,7 +337,7 @@ export default function GalleryPageClient() {
                     src={item.src}
                     alt={item.title}
                     fill
-                    sizes="(min-width: 1200px) 388px, (min-width: 768px) 33vw, 100vw"
+                    sizes="(min-width: 1610px) 523px, (min-width: 768px) 33vw, 100vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-106"
                   />
                   <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">

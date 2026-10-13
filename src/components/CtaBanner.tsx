@@ -36,7 +36,7 @@ export default function CtaBanner({
   }
 
   return (
-    <section className="w-full bg-[#274839] text-white mt-16 sm:mt-24 relative overflow-hidden">
+    <section className="w-full bg-[#274839] text-white mt-16 sm:mt-24 relative overflow-hidden px-4 sm:px-8 lg:px-[80px]">
       {/* Background Gardener Image (placed at bottom) */}
       <div className="absolute bottom-0 left-0 w-full h-[65%] sm:h-[75%] lg:h-[80%] z-0 pointer-events-none">
         <Image
@@ -63,7 +63,7 @@ export default function CtaBanner({
       <div className="absolute inset-0 z-[1] bg-[#274839]/85 sm:bg-[#274839]/80 lg:hidden pointer-events-none" />
 
       {/* Content Container */}
-      <div className="relative z-10 max-w-[1610px] mx-auto px-4 sm:px-8 lg:px-[80px] pt-16 sm:pt-20 lg:pt-28 pb-48 sm:pb-64 lg:pb-[380px]">
+      <div className="relative z-10 max-w-[1610px] mx-auto pt-16 sm:pt-20 lg:pt-28 pb-48 sm:pb-64 lg:pb-[380px]">
         <div className="max-w-[440px] space-y-5 sm:space-y-6">
           <h2 className="text-3xl sm:text-4xl lg:text-[48px] font-medium leading-[1.2] tracking-[-1.5px] lg:tracking-[-2px]">
             {title}{" "}
