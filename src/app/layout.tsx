@@ -19,7 +19,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://prism-landscaping.vercel.app"),
+  metadataBase: new URL("https://greenlycom.vercel.app"),
   title: "Greenly - Gardening Service Website",
   description: "Transform Your Outdoor Space Effortlessly Today. Professional gardening and landscaping services.",
   icons: {

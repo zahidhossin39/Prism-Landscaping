@@ -2,6 +2,8 @@
 
 A modern, responsive, high-performance landscaping web application built with **Next.js 16 (App Router)**, **React 19**, **TypeScript**, and **Tailwind CSS**.
 
+🌐 **Live Website**: [https://greenlycom.vercel.app/](https://greenlycom.vercel.app/)
+
 ---
 
 ## 🌿 Overview
