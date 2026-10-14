@@ -123,3 +123,14 @@ body {
   animation: soundWave 0.8s ease-in-out infinite 0.15s;
 }
 
+/* Utility to hide scrollbars while preserving scrollability */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+

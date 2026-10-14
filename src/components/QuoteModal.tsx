@@ -90,7 +90,7 @@ export default function QuoteModal({ isOpen, onClose, defaultService = "Lawn Mow
     >
       <div
         data-lenis-prevent
-        className="relative w-full max-w-lg h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto bg-[#ffffff] rounded-none sm:rounded-[24px] shadow-2xl border border-[#e2dec9] text-[#1f1f1f] p-6 sm:p-8 flex flex-col animate-in fade-in duration-200"
+        className="relative w-full max-w-lg h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden bg-[#ffffff] rounded-none sm:rounded-[24px] shadow-2xl border border-[#e2dec9] text-[#1f1f1f] p-6 sm:p-8 flex flex-col animate-in fade-in duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         <button
