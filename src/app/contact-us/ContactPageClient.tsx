@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import QuoteModal from "@/components/QuoteModal";
@@ -22,15 +22,7 @@ export default function ContactPageClient() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const submitTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (submitTimerRef.current) {
-        clearTimeout(submitTimerRef.current);
-      }
-    };
-  }, []);
+  const [submitError, setSubmitError] = useState("");
 
   const handleOpenQuote = (service?: string) => {
     if (service) setSelectedService(service);
@@ -44,19 +36,26 @@ export default function ContactPageClient() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    submitTimerRef.current = setTimeout(() => {
-      setIsSubmitting(false);
+    setSubmitError("");
+    try {
+      const res = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "Contact", ...formData, name: formData.fullName }),
+      });
+      if (!res.ok) throw new Error();
       setIsSubmitted(true);
-    }, 600);
+    } catch {
+      setSubmitError("Something went wrong. Please try again or call +1 (000) 123-4567.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleResetForm = () => {
-    if (submitTimerRef.current) {
-      clearTimeout(submitTimerRef.current);
-    }
     setFormData({
       fullName: "",
       email: "",
@@ -316,6 +315,7 @@ export default function ContactPageClient() {
 
                     {/* Submit Button */}
                     <div className="pt-2">
+                      {submitError && <p role="alert" className="mb-3 text-sm text-red-600">{submitError}</p>}
                       <button
                         type="submit"
                         disabled={isSubmitting}

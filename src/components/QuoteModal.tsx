@@ -33,6 +33,8 @@ export default function QuoteModal({ isOpen, onClose, defaultService = "Lawn Mow
     notes: "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const autoCloseTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const [prevService, setPrevService] = useState(defaultService);
@@ -71,8 +73,23 @@ export default function QuoteModal({ isOpen, onClose, defaultService = "Lawn Mow
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError("");
+    try {
+      const res = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "Quote", ...formData, message: formData.notes }),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      setSubmitError("Something went wrong. Please try again or call +1 (000) 123-4567.");
+      return;
+    } finally {
+      setIsSubmitting(false);
+    }
     setIsSubmitted(true);
     if (autoCloseTimerRef.current) clearTimeout(autoCloseTimerRef.current);
     autoCloseTimerRef.current = setTimeout(() => {
@@ -212,9 +229,11 @@ export default function QuoteModal({ isOpen, onClose, defaultService = "Lawn Mow
                 />
               </div>
 
+              {submitError && <p role="alert" className="text-sm text-red-600">{submitError}</p>}
               <button
                 type="submit"
-                className="w-full py-3 px-6 rounded-full bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 group shadow-sm hover:shadow"
+                disabled={isSubmitting}
+                className="disabled:opacity-75 w-full py-3 px-6 rounded-full bg-[#bedd25] hover:bg-[#adce1e] text-[#1f1f1f] font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 group shadow-sm hover:shadow"
               >
                 <span>Submit Request</span>
                 <div className="w-6 h-6 rounded-full bg-[#1f1f1f] text-white flex items-center justify-center transition-transform group-hover:translate-x-0.5">
