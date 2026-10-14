@@ -4,10 +4,10 @@ import { NextResponse } from "next/server";
 // (see scripts/leads-apps-script.gs).
 const FIELDS = ["type", "name", "email", "phone", "address", "service", "message"] as const;
 
-// Prefix values Sheets would treat as formulas, so user input can't run as a formula.
+// Leading ' makes Sheets store input as plain text: no formulas, and phone numbers keep leading zeros.
 const clean = (v: unknown) => {
   const s = String(v ?? "").trim().slice(0, 2000);
-  return /^[=+\-@]/.test(s) ? `'${s}` : s;
+  return s ? `'${s}` : "";
 };
 
 export async function POST(req: Request) {
