@@ -88,7 +88,8 @@ npm run start
 3. **Collaboration with Masum Khan**:
    - Masum Khan (`hello.masumiqbal@gmail.com`) frequently pushes to the same GitHub repository.
    - **Always run `git pull origin main` before starting new tasks** to avoid merge conflicts.
-4. **AI "Unslop" Doctrine**:
+4. **Commits**: Do NOT add the `Co-Authored-By: Claude` line to commit messages in this project (user's decision).
+5. **AI "Unslop" Doctrine**:
    - System prompts and AI outputs must avoid synthetic AI buzzwords (e.g. "delve", "foster", "testament", "tapestry", "embark", em-dashes, or unsolicited conversational emoji). Keep responses natural, concise, and helpful.
 
 ---
