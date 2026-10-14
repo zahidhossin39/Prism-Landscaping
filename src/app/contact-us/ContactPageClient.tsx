@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import QuoteModal from "@/components/QuoteModal";
-import { ArrowUpRight, CheckCircle2, ChevronDown } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, ChevronDown, Loader2 } from "lucide-react";
 import { services } from "@/data/services";
 
 export default function ContactPageClient() {
@@ -22,6 +22,15 @@ export default function ContactPageClient() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const submitTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (submitTimerRef.current) {
+        clearTimeout(submitTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleOpenQuote = (service?: string) => {
     if (service) setSelectedService(service);
@@ -38,13 +47,16 @@ export default function ContactPageClient() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
+    submitTimerRef.current = setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
     }, 600);
   };
 
   const handleResetForm = () => {
+    if (submitTimerRef.current) {
+      clearTimeout(submitTimerRef.current);
+    }
     setFormData({
       fullName: "",
       email: "",
@@ -76,7 +88,7 @@ export default function ContactPageClient() {
                   </span>
                 </h1>
                 <p className="mt-4 text-sm sm:text-base text-[#606060] leading-[1.56]">
-                  Our experts are ready to help you create and maintain a healthy beautiful garden or lawn whether.
+                  Our experts are ready to help you create and maintain a healthy, beautiful garden or lawn whether residential or commercial.
                 </p>
               </div>
 
@@ -147,7 +159,9 @@ export default function ContactPageClient() {
                       Thank You!
                     </h3>
                     <p className="text-sm sm:text-base text-[#606060] max-w-md mx-auto leading-relaxed">
-                      Your request{formData.service ? ` for ${formData.service}` : ""} has been received. Our gardening specialists will contact you shortly to confirm your appointment.
+                      Your request{formData.service ? (
+                        <> for <span className="font-semibold text-[#1f1f1f]">{formData.service}</span></>
+                      ) : ""} has been received. Our gardening specialists will contact you shortly to confirm your appointment.
                     </p>
                     <div className="pt-4">
                       <button
@@ -179,7 +193,7 @@ export default function ContactPageClient() {
                           value={formData.fullName}
                           onChange={handleInputChange}
                           placeholder="Enter your full name"
-                          className="w-full bg-[#f2f1e7] text-[#1f1f1f] placeholder:text-[#606060] px-4 py-3.5 sm:py-4 rounded-lg border border-[#1f1f1f]/5 focus:border-[#274839] focus:outline-none text-base transition-colors"
+                          className="w-full bg-[#f2f1e7] text-[#1f1f1f] placeholder:text-[#606060] px-4 py-3.5 sm:py-4 rounded-lg border border-[#1f1f1f]/10 focus:border-[#274839] focus:ring-2 focus:ring-[#274839]/20 focus:outline-none text-base transition-all"
                         />
                       </div>
 
@@ -199,12 +213,12 @@ export default function ContactPageClient() {
                           value={formData.email}
                           onChange={handleInputChange}
                           placeholder="Enter your email"
-                          className="w-full bg-[#f2f1e7] text-[#1f1f1f] placeholder:text-[#606060] px-4 py-3.5 sm:py-4 rounded-lg border border-[#1f1f1f]/5 focus:border-[#274839] focus:outline-none text-base transition-colors"
+                          className="w-full bg-[#f2f1e7] text-[#1f1f1f] placeholder:text-[#606060] px-4 py-3.5 sm:py-4 rounded-lg border border-[#1f1f1f]/10 focus:border-[#274839] focus:ring-2 focus:ring-[#274839]/20 focus:outline-none text-base transition-all"
                         />
                       </div>
                     </div>
 
-                    {/* Row 2: Phone Number & Address */}
+                    {/* Row 2: Phone Number & Select Service */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 w-full">
                       {/* Phone Number (Optional) */}
                       <div className="flex flex-col gap-2 w-full">
@@ -221,59 +235,64 @@ export default function ContactPageClient() {
                           value={formData.phone}
                           onChange={handleInputChange}
                           placeholder="+1 (000) 123-4567"
-                          className="w-full bg-[#f2f1e7] text-[#1f1f1f] placeholder:text-[#606060] px-4 py-3.5 sm:py-4 rounded-lg border border-[#1f1f1f]/5 focus:border-[#274839] focus:outline-none text-base transition-colors"
+                          className="w-full bg-[#f2f1e7] text-[#1f1f1f] placeholder:text-[#606060] px-4 py-3.5 sm:py-4 rounded-lg border border-[#1f1f1f]/10 focus:border-[#274839] focus:ring-2 focus:ring-[#274839]/20 focus:outline-none text-base transition-all"
                         />
                       </div>
 
-                      {/* Address (Optional) */}
+                      {/* Select Service */}
                       <div className="flex flex-col gap-2 w-full">
                         <label
-                          htmlFor="address"
+                          htmlFor="service"
                           className="text-base sm:text-lg font-medium text-[#1f1f1f] tracking-[0.1px] leading-[1.6]"
                         >
-                          Address
+                          Select Service
                         </label>
-                        <input
-                          id="address"
-                          name="address"
-                          type="text"
-                          value={formData.address}
-                          onChange={handleInputChange}
-                          placeholder="Street address, city, zip code"
-                          className="w-full bg-[#f2f1e7] text-[#1f1f1f] placeholder:text-[#606060] px-4 py-3.5 sm:py-4 rounded-lg border border-[#1f1f1f]/5 focus:border-[#274839] focus:outline-none text-base transition-colors"
-                        />
+                        <div className="relative w-full">
+                          <select
+                            id="service"
+                            name="service"
+                            required
+                            aria-label="Select Service"
+                            value={formData.service}
+                            onChange={handleInputChange}
+                            className={`w-full bg-[#f2f1e7] ${
+                              formData.service ? "text-[#1f1f1f]" : "text-[#606060]"
+                            } px-4 py-3.5 sm:py-4 rounded-lg border border-[#1f1f1f]/10 focus:border-[#274839] focus:ring-2 focus:ring-[#274839]/20 focus:outline-none text-base transition-all cursor-pointer appearance-none pr-11`}
+                          >
+                            <option value="" disabled className="text-[#606060] bg-white">
+                              Select a service...
+                            </option>
+                            {services.map((svc) => (
+                              <option key={svc.slug} value={svc.title} className="text-[#1f1f1f] bg-white">
+                                {svc.title}
+                              </option>
+                            ))}
+                            <option value="General Inquiry" className="text-[#1f1f1f] bg-white">
+                              General Inquiry
+                            </option>
+                          </select>
+                          <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#606060]" />
+                        </div>
                       </div>
                     </div>
 
-                    {/* Row 3: Select Service */}
+                    {/* Row 3: Address (Full Width for complete street/city/zip details) */}
                     <div className="flex flex-col gap-2 w-full">
                       <label
-                        htmlFor="service"
+                        htmlFor="address"
                         className="text-base sm:text-lg font-medium text-[#1f1f1f] tracking-[0.1px] leading-[1.6]"
                       >
-                        Select Service
+                        Address
                       </label>
-                      <div className="relative w-full">
-                        <select
-                          id="service"
-                          name="service"
-                          required
-                          value={formData.service}
-                          onChange={handleInputChange}
-                          className="w-full bg-[#f2f1e7] text-[#1f1f1f] px-4 py-3.5 sm:py-4 rounded-lg border border-[#1f1f1f]/5 focus:border-[#274839] focus:outline-none text-base transition-colors cursor-pointer appearance-none pr-11"
-                        >
-                          <option value="" disabled>Select a service...</option>
-                          {services.map((svc) => (
-                            <option key={svc.slug} value={svc.title} className="text-[#1f1f1f] bg-white">
-                              {svc.title}
-                            </option>
-                          ))}
-                          <option value="General Inquiry" className="text-[#1f1f1f] bg-white">
-                            General Inquiry
-                          </option>
-                        </select>
-                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#606060]" />
-                      </div>
+                      <input
+                        id="address"
+                        name="address"
+                        type="text"
+                        value={formData.address}
+                        onChange={handleInputChange}
+                        placeholder="Street address, city, zip code"
+                        className="w-full bg-[#f2f1e7] text-[#1f1f1f] placeholder:text-[#606060] px-4 py-3.5 sm:py-4 rounded-lg border border-[#1f1f1f]/10 focus:border-[#274839] focus:ring-2 focus:ring-[#274839]/20 focus:outline-none text-base transition-all"
+                      />
                     </div>
 
                     {/* Row 4: Message */}
@@ -291,7 +310,7 @@ export default function ContactPageClient() {
                         value={formData.message}
                         onChange={handleInputChange}
                         placeholder="Tell us about your garden project, requirements, or any specific questions..."
-                        className="w-full bg-[#f2f1e7] text-[#1f1f1f] placeholder:text-[#606060] px-4 py-3.5 sm:py-4 rounded-lg border border-[#1f1f1f]/5 focus:border-[#274839] focus:outline-none text-base transition-colors resize-y min-h-[120px]"
+                        className="w-full bg-[#f2f1e7] text-[#1f1f1f] placeholder:text-[#606060] px-4 py-3.5 sm:py-4 rounded-lg border border-[#1f1f1f]/10 focus:border-[#274839] focus:ring-2 focus:ring-[#274839]/20 focus:outline-none text-base transition-all resize-y min-h-[120px]"
                       />
                     </div>
 
@@ -302,9 +321,14 @@ export default function ContactPageClient() {
                         disabled={isSubmitting}
                         className="w-full bg-[#bedd25] hover:bg-[#adce1e] active:scale-[0.99] text-[#1f1f1f] font-medium py-4 px-5 rounded-[10px] text-base transition-all duration-200 flex items-center justify-center cursor-pointer disabled:opacity-75 shadow-sm hover:shadow"
                       >
-                        <span>
-                          {isSubmitting ? "Submitting..." : "Book Your Services"}
-                        </span>
+                        {isSubmitting ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <span>Submitting...</span>
+                          </span>
+                        ) : (
+                          <span>Book Your Services</span>
+                        )}
                       </button>
                     </div>
                   </form>
