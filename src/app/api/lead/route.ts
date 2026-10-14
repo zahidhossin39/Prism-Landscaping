@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
-// Appends a website lead (contact form or quote modal) to the Google Sheet via Composio.
+// Appends a website lead (contact form or quote modal) to the Google Sheet via an Apps Script web app
+// (see scripts/leads-apps-script.gs).
 const FIELDS = ["type", "name", "email", "phone", "address", "service", "message"] as const;
 
 // Prefix values Sheets would treat as formulas, so user input can't run as a formula.
@@ -10,8 +11,8 @@ const clean = (v: unknown) => {
 };
 
 export async function POST(req: Request) {
-  const { COMPOSIO_API_KEY, COMPOSIO_CONNECTED_ACCOUNT_ID, LEADS_SHEET_ID } = process.env;
-  if (!COMPOSIO_API_KEY || !COMPOSIO_CONNECTED_ACCOUNT_ID || !LEADS_SHEET_ID) {
+  const { LEADS_WEBHOOK_URL, LEADS_WEBHOOK_TOKEN } = process.env;
+  if (!LEADS_WEBHOOK_URL || !LEADS_WEBHOOK_TOKEN) {
     return NextResponse.json({ error: "Lead capture is not configured" }, { status: 500 });
   }
 
@@ -22,27 +23,16 @@ export async function POST(req: Request) {
 
   const row = [new Date().toISOString(), ...FIELDS.map((f) => clean(body[f]))];
 
-  const res = await fetch(
-    "https://backend.composio.dev/api/v3/tools/execute/GOOGLESHEETS_SPREADSHEETS_VALUES_APPEND",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-api-key": COMPOSIO_API_KEY },
-      body: JSON.stringify({
-        connected_account_id: COMPOSIO_CONNECTED_ACCOUNT_ID,
-        arguments: {
-          spreadsheetId: LEADS_SHEET_ID,
-          range: "Sheet1!A:H",
-          valueInputOption: "RAW",
-          insertDataOption: "INSERT_ROWS",
-          values: [row],
-        },
-      }),
-    }
-  );
+  // Apps Script answers POST with a redirect to the result; fetch follows it.
+  const res = await fetch(LEADS_WEBHOOK_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token: LEADS_WEBHOOK_TOKEN, row }),
+  });
   const data = await res.json().catch(() => null);
 
-  if (!res.ok || data?.successful === false) {
-    console.error("Lead append failed:", res.status, data?.error ?? data);
+  if (!res.ok || !data?.ok) {
+    console.error("Lead append failed:", res.status, data);
     return NextResponse.json({ error: "Could not save your request" }, { status: 502 });
   }
   return NextResponse.json({ ok: true });
