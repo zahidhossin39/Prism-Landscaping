@@ -40,7 +40,7 @@ COMPANY INFORMATION:
 ESTIMATES, BOOKINGS, AND DEMOS:
 - Request online: Visitors can click "Book Your Service", "Get A Free Quote", or "Book A Demo" on the site.
 - Quote form details: Requests name, email, phone number, service type, and yard dimensions or notes.
-- Demo form details: Located on the contact page at /contact-us, requesting name, email, phone number, and address.
+- Demo form details: Located on the contact page at /contact-us, requesting name, email, phone number, address, service selection, and message.
 - Phone bookings: Call +1 (000) 123-4567.
 - Free written estimates arrive within 24 hours. Large projects and custom designs include a free on-site walk-through.
 - 4-step process: 1. Receive a Quote, 2. Schedule the Service, 3. Service Completion, 4. Follow-Up Support.
@@ -264,7 +264,7 @@ function generateGreenlyResponse(input: string | ChatMessage[]): { reply: string
   // Demo scheduling
   if (/demo|book demo|schedule demo/i.test(query)) {
     return {
-      reply: "You can schedule a consultation demo on the contact page at /contact-us by submitting your name, email, phone number, and address. You can also call us directly at +1 (000) 123-4567.",
+      reply: "You can schedule a consultation demo on the contact page at /contact-us by selecting your service and submitting your contact details and message. You can also call us directly at +1 (000) 123-4567.",
       suggestions: ["Schedule A Demo", "Get A Free Quote", "Contact Us"],
     };
   }
